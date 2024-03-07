@@ -16,6 +16,7 @@ function createEvent() {
 function createStore(initial) {
 	const store_changed_event_key = crypto.randomUUID();
 
+	// TODO: only serializable values as Proxy target
 	const $ = new Proxy(structuredClone(initial ?? {}), {
 		get(target, prop) {
 			return target[prop];
@@ -27,7 +28,7 @@ function createStore(initial) {
 	});
 
 	return {
-		value: $,
+		get: (prop) => $[prop],
 		on: (event, handler) => {
 			document.addEventListener(event.key, (kernel_event) =>
 				handler($, { payload: kernel_event.detail })
@@ -68,7 +69,7 @@ const $regular = createStore({ name: "Alex" });
 const $upper = createStore({ upperCased: "" });
 
 $upper.on(app_launched, (store) => {
-	store.upperCased = $regular.value?.name.toUpperCase();
+	store.upperCased = $regular.get("name")?.toUpperCase() ?? "";
 });
 
 $regular.on(name_changed, (store, event) => {
@@ -76,7 +77,7 @@ $regular.on(name_changed, (store, event) => {
 	upper_case_needed.emit();
 });
 $upper.on(upper_case_needed, (store) => {
-	store.upperCased = $regular.value.name?.toUpperCase() ?? "";
+	store.upperCased = $regular.get("name")?.toUpperCase() ?? "";
 });
 
 $regular.watch((store) => {
@@ -87,7 +88,6 @@ $upper.watch((store) => {
 });
 
 app_launched.emit();
-
 // ----------------
 
 const reactive_regular = $regular.subscribe(display, "name");
