@@ -1,10 +1,7 @@
 const display = document.querySelector("#display");
-const toggle = document.querySelector("#log");
-
-/*
- * add event store_key
- * */
-const STORE_CHANGED = "store_changed";
+const upper = document.querySelector("#upper");
+const input = document.querySelector("#input");
+const unsubscribe = document.querySelector("#unsubscribe");
 
 function createEvent() {
 	const key = crypto.randomUUID();
@@ -17,13 +14,15 @@ function createEvent() {
 }
 
 function createStore(initial) {
+	const store_changed_event_key = crypto.randomUUID();
+
 	const $ = new Proxy(structuredClone(initial ?? {}), {
 		get(target, prop) {
 			return target[prop];
 		},
 		set(target, prop, val) {
 			target[prop] = val;
-			document.dispatchEvent(new Event(STORE_CHANGED));
+			document.dispatchEvent(new Event(store_changed_event_key));
 		},
 	});
 
@@ -38,19 +37,24 @@ function createStore(initial) {
 			);
 		},
 		watch: (handler) => {
-			document.addEventListener(STORE_CHANGED, () => handler($));
+			document.addEventListener(store_changed_event_key, () =>
+				handler($)
+			);
 		},
 		subscribe(target, prop) {
 			function updateTarget() {
 				target.innerHTML = $[prop];
 			}
 
-			document.addEventListener(STORE_CHANGED, updateTarget);
+			document.addEventListener(store_changed_event_key, updateTarget);
 			updateTarget();
 
 			return {
 				unsubscribe() {
-					document.removeEventListener(STORE_CHANGED, updateTarget);
+					document.removeEventListener(
+						store_changed_event_key,
+						updateTarget
+					);
 				},
 			};
 		},
@@ -59,26 +63,42 @@ function createStore(initial) {
 
 // ----------------------------
 
-const connected = createEvent();
-const disconnected = createEvent();
 const nameChanged = createEvent();
+const upperCaseNeeded = createEvent();
+const appLaunched = createEvent();
 
-const $reactive_store = createStore({ isConnected: false, name: "Alex" });
+const $regular = createStore({ name: "Alex" });
+const $upper = createStore({ upperCased: "" });
 
-$reactive_store.on(connected, (store) => (store.isConnected = true));
-$reactive_store.on(disconnected, (store) => (store.isConnected = false));
-
-$reactive_store.on(nameChanged, (store, event) => {
-	store.name = event.payload;
+$upper.on(appLaunched, (store) => {
+	store.upperCased = $regular.value?.name.toUpperCase();
 });
 
-$reactive_store.watch((store) => {
-	console.log(store.name);
+$regular.on(nameChanged, (store, event) => {
+	store.name = event.payload ?? "";
+	upperCaseNeeded.emit();
+});
+$upper.on(upperCaseNeeded, (store) => {
+	store.upperCased = $regular.value.name?.toUpperCase() ?? "";
 });
 
-const reactive_display = $reactive_store.subscribe(display, "name");
-// setTimeout(() => reactive_display.unsubscribe(), 2000);
+$regular.watch((store) => {
+	console.log("$regular", store);
+});
+$upper.watch((store) => {
+	console.log("$upper", store);
+});
 
-toggle.addEventListener("click", () => {
-	nameChanged.emit("Nikita / " + Math.random());
+appLaunched.emit();
+
+const reactive_regular = $regular.subscribe(display, "name");
+const reactive_upper = $upper.subscribe(upper, "upperCased");
+
+input.addEventListener("input", ({ target }) => {
+	nameChanged.emit(target.value);
+});
+
+unsubscribe.addEventListener("click", () => {
+	reactive_regular.unsubscribe();
+	reactive_upper.unsubscribe();
 });
