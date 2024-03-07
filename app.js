@@ -27,9 +27,6 @@ function createStore(initial) {
 	});
 
 	return {
-		/*
-		 * replace with direct subscription
-		 * */
 		value: $,
 		on: (event, handler) => {
 			document.addEventListener(event.key, (kernel_event) =>
@@ -63,22 +60,22 @@ function createStore(initial) {
 
 // ----------------------------
 
-const nameChanged = createEvent();
-const upperCaseNeeded = createEvent();
-const appLaunched = createEvent();
+const name_changed = createEvent();
+const upper_case_needed = createEvent();
+const app_launched = createEvent();
 
 const $regular = createStore({ name: "Alex" });
 const $upper = createStore({ upperCased: "" });
 
-$upper.on(appLaunched, (store) => {
+$upper.on(app_launched, (store) => {
 	store.upperCased = $regular.value?.name.toUpperCase();
 });
 
-$regular.on(nameChanged, (store, event) => {
+$regular.on(name_changed, (store, event) => {
 	store.name = event.payload ?? "";
-	upperCaseNeeded.emit();
+	upper_case_needed.emit();
 });
-$upper.on(upperCaseNeeded, (store) => {
+$upper.on(upper_case_needed, (store) => {
 	store.upperCased = $regular.value.name?.toUpperCase() ?? "";
 });
 
@@ -89,13 +86,15 @@ $upper.watch((store) => {
 	console.log("$upper", store);
 });
 
-appLaunched.emit();
+app_launched.emit();
+
+// ----------------
 
 const reactive_regular = $regular.subscribe(display, "name");
 const reactive_upper = $upper.subscribe(upper, "upperCased");
 
 input.addEventListener("input", ({ target }) => {
-	nameChanged.emit(target.value);
+	name_changed.emit(target.value);
 });
 
 unsubscribe.addEventListener("click", () => {
