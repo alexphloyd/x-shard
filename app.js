@@ -18,7 +18,7 @@ function createEvent() {
 function createStore(initial) {
 	const store_changed_event_key = crypto.randomUUID();
 
-	// TODO: only serializable values as Proxy target
+	// TODO: clone or ref ?
 	const $ = new Proxy(structuredClone(initial ?? {}), {
 		get(target, prop) {
 			return target[prop];
@@ -79,6 +79,20 @@ const app_launched = createEvent();
 
 const $regular = createStore({ name: "Alex" });
 const $upper = createStore({ upperCased: "" });
+
+const map_ref = new Map();
+map_ref.set("ok", "google");
+
+const $no_serializable = createStore({ map_instance: map_ref });
+$no_serializable.get("map_instance").set("name", "alex");
+
+$no_serializable.on(app_launched, (store) => {
+	console.log(store.map_instance.get("name")); // -> alex
+	console.log(store.map_instance.get("ok")); // -> google
+});
+
+console.log(map_ref.get("name"));
+// $ store cloned value -> name is undef -> to force use value from store -> ?? ref_map still alive
 
 $upper.on(app_launched, (store) => {
 	store.upperCased = $regular.get("name")?.toUpperCase() ?? "";
