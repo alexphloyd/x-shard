@@ -39,7 +39,8 @@ function createStore(initial) {
 				handler($)
 			);
 		},
-		subscribe(target, prop) {
+		subscribe(prop) {},
+		__html__bind__subscribe(target, prop) {
 			function updateTarget() {
 				target.innerHTML = $[prop];
 			}
@@ -90,8 +91,8 @@ $upper.watch((store) => {
 app_launched.emit();
 // ----------------
 
-const reactive_regular = $regular.subscribe(display, "name");
-const reactive_upper = $upper.subscribe(upper, "upperCased");
+const reactive_regular = $regular.__html__bind__subscribe(display, "name");
+const reactive_upper = $upper.__html__bind__subscribe(upper, "upperCased");
 
 input.addEventListener("input", ({ target }) => {
 	name_changed.emit(target.value);
