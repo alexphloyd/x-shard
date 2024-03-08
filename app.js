@@ -30,19 +30,27 @@ function createStore(initial) {
 	});
 
 	return {
+		/*
+		 * access to store
+		 * */
 		get: (prop) => $[prop],
+		/*
+		 * handle emitted events
+		 * */
 		on: (event_emitter, handler) => {
 			document.addEventListener(
 				event_keys_storage.get(event_emitter),
 				(kernel_event) => handler($, { payload: kernel_event.detail })
 			);
 		},
+		/*
+		 * allow to track store changes
+		 * */
 		watch: (handler) => {
 			document.addEventListener(store_changed_event_key, () =>
 				handler($)
 			);
 		},
-		subscribe(prop) {},
 		__html__bind__subscribe(target, prop) {
 			function updateTarget() {
 				target.innerHTML = $[prop];
