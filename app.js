@@ -3,14 +3,16 @@ const upper = document.querySelector("#upper");
 const input = document.querySelector("#input");
 const unsubscribe = document.querySelector("#unsubscribe");
 
+const event_keys_storage = new WeakMap();
+
 function createEvent() {
 	const key = crypto.randomUUID();
-	return {
-		emit(payload) {
-			document.dispatchEvent(new CustomEvent(key, { detail: payload }));
-		},
-		key,
+	const emitter = (payload) => {
+		document.dispatchEvent(new CustomEvent(key, { detail: payload }));
 	};
+
+	event_keys_storage.set(emitter, key);
+	return emitter;
 }
 
 function createStore(initial) {
@@ -29,9 +31,10 @@ function createStore(initial) {
 
 	return {
 		get: (prop) => $[prop],
-		on: (event, handler) => {
-			document.addEventListener(event.key, (kernel_event) =>
-				handler($, { payload: kernel_event.detail })
+		on: (event_emitter, handler) => {
+			document.addEventListener(
+				event_keys_storage.get(event_emitter),
+				(kernel_event) => handler($, { payload: kernel_event.detail })
 			);
 		},
 		watch: (handler) => {
@@ -75,7 +78,7 @@ $upper.on(app_launched, (store) => {
 
 $regular.on(name_changed, (store, event) => {
 	store.name = event.payload ?? "";
-	upper_case_needed.emit();
+	upper_case_needed();
 });
 $upper.on(upper_case_needed, (store) => {
 	store.upperCased = $regular.get("name")?.toUpperCase() ?? "";
@@ -88,14 +91,15 @@ $upper.watch((store) => {
 	console.log("$upper", store);
 });
 
-app_launched.emit();
+app_launched();
+
 // ----------------
 
 const reactive_regular = $regular.__html__bind__subscribe(display, "name");
 const reactive_upper = $upper.__html__bind__subscribe(upper, "upperCased");
 
 input.addEventListener("input", ({ target }) => {
-	name_changed.emit(target.value);
+	name_changed(target.value);
 });
 
 unsubscribe.addEventListener("click", () => {
