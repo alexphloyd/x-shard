@@ -10,6 +10,19 @@ describe('store', () => {
 		}
 	}
 
+	test('store reference passed to .watch & .on should be mutable', () => {
+		const $ = createStore<{ instance?: Helper; text?: string }>({ instance: undefined, text: 'google' });
+		$.on(helper_event, (store) => {
+			store.instance = new Helper();
+			store.text = undefined;
+		});
+		helper_event();
+
+		const helper_instance_in_store = $.get().instance;
+		expect(helper_instance_in_store?.say()).toEqual('test');
+		expect($.get().text).toBeUndefined();
+	});
+
 	test('snapshot cannot be mutated', () => {
 		const $ = createStore({
 			string: 'text',
@@ -26,6 +39,7 @@ describe('store', () => {
 		});
 		const snapshot = $.get();
 
+		expect(() => Reflect.deleteProperty(snapshot, 'boolean')).toThrowError();
 		expect(() => (snapshot.string = 'new text')).toThrowError();
 		expect(() => (snapshot.string = {} as any)).toThrowError();
 		expect(() => (snapshot.number = 20)).toThrowError();
@@ -62,7 +76,7 @@ describe('store', () => {
 		expect($.get().ok.map).toBeInstanceOf(Map);
 	});
 
-	test('should mutate origin Map', () => {
+	test('should mutate origin Instance', () => {
 		const map_ref = new Map();
 		map_ref.set('ok', 'google');
 
