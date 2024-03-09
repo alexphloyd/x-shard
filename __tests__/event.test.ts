@@ -2,37 +2,37 @@ import { describe, expect, test, vi } from 'vitest';
 import { createEvent, createStore } from '../src/core';
 
 describe('event', () => {
-	const $ = createStore({ hello: 'world' });
-	const event_payload = { ok: 'google' };
-
 	test('create', () => {
-		const event = vi.fn(createEvent);
+		const mocked_create_event = vi.fn(createEvent);
+		const event = vi.fn(mocked_create_event());
 		event();
 
-		expect(event).toBeDefined();
 		expect(event).toHaveBeenCalledOnce();
+		expect(mocked_create_event).toHaveBeenCalledOnce();
 	});
 
 	test('should be consumed with payload', () => {
+		const $ = createStore();
 		const event = createEvent<{ ok: string }>();
-		event(event_payload);
+		event({ ok: 'google' });
 
 		$.on(event, (_store: any, event: any) => {
 			expect(event).toBeDefined();
-			expect(event.payload).toStrictEqual(event_payload);
+			expect(event.payload).toStrictEqual({ ok: 'google' });
 		});
 	});
 
-	test('should not trigger STORE_CHANGED event', () => {
-		const handler = vi.fn(() => {});
+	test('not related events should not trigger the STORE_CHANGED event', () => {
+		const $ = createStore();
+		vi.spyOn($, 'watch');
 
 		const event = createEvent();
 		event();
 
-		$.watch((store) => {
-			store.hello = '2';
-		});
+		const mocked_handler = vi.fn(() => {});
+		$.watch(mocked_handler);
 
-		expect(handler).toHaveBeenCalledTimes(0);
+		expect(mocked_handler).toHaveBeenCalledTimes(0);
+		expect($.watch).toHaveBeenCalledTimes(1);
 	});
 });
