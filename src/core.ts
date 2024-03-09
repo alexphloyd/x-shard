@@ -23,7 +23,7 @@ export function createStore<S extends StoreInterface>(initial: S = {} as S) {
 		set(target, prop, passed_value) {
 			target[prop as keyof S] = passed_value;
 			document.dispatchEvent(new Event(store_changed_event_key));
-			return Boolean(passed_value);
+			return true;
 		},
 	});
 
