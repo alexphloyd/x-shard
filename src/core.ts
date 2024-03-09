@@ -1,4 +1,4 @@
-import { parse_proxy_target } from './utils';
+import { create_deep_immutable_proxy, parse_proxy_target } from './utils';
 
 const event_keys_storage = new WeakMap();
 
@@ -12,11 +12,11 @@ export function createEvent<T extends EventPayload | void = void>() {
 	return emitter;
 }
 
-export function createStore<S extends StoreInterface>(initial?: S) {
+export function createStore<S extends StoreInterface>(initial: S = {} as S) {
 	const store_changed_event_key = crypto.randomUUID();
-	const proxy_target = initial ? structuredClone(parse_proxy_target(initial)) : {};
+	const proxy_target = parse_proxy_target(initial);
 
-	const $ = new Proxy(proxy_target as S, {
+	const $ = new Proxy(proxy_target, {
 		get(target, prop) {
 			return target[prop as keyof S];
 		},
@@ -27,11 +27,13 @@ export function createStore<S extends StoreInterface>(initial?: S) {
 		},
 	});
 
+	const immutable_proxy = create_deep_immutable_proxy(proxy_target);
+
 	return {
 		/**
-		 * @description $.get() allow to get a store instance
+		 * @description $.get() allow to get an immutable store snapshot
 		 * */
-		get: (prop?: keyof S) => (prop ? $[prop] : $),
+		get: () => immutable_proxy,
 		/**
 		 * @description $.on(event, handler) - allow to handle emitted events.
 		 * Handler has an access to the store and event details.
@@ -60,7 +62,7 @@ export function createStore<S extends StoreInterface>(initial?: S) {
 }
 
 interface StoreInterface {
-	[key: string]: unknown;
+	[key: string]: any;
 }
 
 type EventEmitter<P extends EventPayload | void = void> = ReturnType<typeof createEvent<P>>;
