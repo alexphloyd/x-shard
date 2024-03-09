@@ -1,3 +1,5 @@
+import { parse_proxy_target } from './utils';
+
 const event_keys_storage = new WeakMap();
 
 export function createEvent<T extends EventPayload | void = void>() {
@@ -10,22 +12,16 @@ export function createEvent<T extends EventPayload | void = void>() {
 	return emitter;
 }
 
-type EventEmitter<P extends EventPayload | void = void> = ReturnType<
-	typeof createEvent<P>
->;
-
-export function createStore<T extends ProxyTarget>(initial?: T) {
+export function createStore<S extends StoreInterface>(initial?: S) {
 	const store_changed_event_key = crypto.randomUUID();
-	const proxy_target = initial
-		? structuredClone(parse_proxy_target(initial))
-		: {};
+	const proxy_target = initial ? structuredClone(parse_proxy_target(initial)) : {};
 
-	const $ = new Proxy(proxy_target as T, {
+	const $ = new Proxy(proxy_target as S, {
 		get(target, prop) {
-			return target[prop as keyof T];
+			return target[prop as keyof S];
 		},
 		set(target, prop, passed_value) {
-			target[prop as keyof T] = passed_value;
+			target[prop as keyof S] = passed_value;
 			document.dispatchEvent(new Event(store_changed_event_key));
 			return Boolean(passed_value);
 		},
@@ -35,26 +31,22 @@ export function createStore<T extends ProxyTarget>(initial?: T) {
 		/**
 		 * @description $.get() allow to get a store instance
 		 * */
-		get: (prop?: keyof T) => (prop ? $[prop] : $),
+		get: (prop?: keyof S) => (prop ? $[prop] : $),
 		/**
 		 * @description $.on(event, handler) - allow to handle emitted events.
 		 * Handler has an access to the store and event details.
 		 * */
-		on: <
-			E extends EventEmitter<any>,
-			P extends Parameters<EventEmitter<Parameters<E>[0]>>[0]
-		>(
+		on: <E extends EventEmitter<any>>(
 			event_emitter: E,
 			handler: (
 				store: typeof $,
 				event: {
-					payload: P;
+					payload: ExtractEventPayload<E>;
 				}
 			) => void
 		) => {
-			document.addEventListener(
-				event_keys_storage.get(event_emitter),
-				(kernel_event) => handler($, { payload: kernel_event.detail })
+			document.addEventListener(event_keys_storage.get(event_emitter), (kernel_event) =>
+				handler($, { payload: kernel_event.detail })
 			);
 		},
 		/**
@@ -62,29 +54,17 @@ export function createStore<T extends ProxyTarget>(initial?: T) {
 		 * Handler has an access to the store.
 		 * */
 		watch: (handler: (store: typeof $) => void) => {
-			document.addEventListener(store_changed_event_key, () =>
-				handler($)
-			);
+			document.addEventListener(store_changed_event_key, () => handler($));
 		},
 	};
 }
 
-export function parse_proxy_target(value: unknown) {
-	const is_valid =
-		value instanceof Object &&
-		!(value instanceof Map) &&
-		!(value instanceof Set) &&
-		!(value instanceof Array);
-	if (!is_valid)
-		throw new Error(
-			`Initial store value should be an object. 
-			 You can store non-serializable values as $store property.`
-		);
-	return value;
-}
-
-interface ProxyTarget {
+interface StoreInterface {
 	[key: string]: unknown;
 }
 
+type EventEmitter<P extends EventPayload | void = void> = ReturnType<typeof createEvent<P>>;
+
 type EventPayload = Record<string, unknown> | string | number | boolean;
+
+type ExtractEventPayload<Emitter> = Emitter extends EventEmitter<infer P> ? P : never;
