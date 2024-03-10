@@ -3,12 +3,12 @@ import { createEvent, createStore } from '../src/core';
 
 describe('event', () => {
 	test('create', () => {
-		const mocked_create_event = vi.fn(createEvent);
-		const event = vi.fn(mocked_create_event());
+		const create_event = vi.fn(createEvent);
+		const event = vi.fn(create_event());
 		event();
 
 		expect(event).toHaveBeenCalledOnce();
-		expect(mocked_create_event).toHaveBeenCalledOnce();
+		expect(create_event).toHaveBeenCalledOnce();
 	});
 
 	test('should be consumed with payload', () => {
@@ -16,7 +16,7 @@ describe('event', () => {
 		const event = createEvent<{ ok: string }>();
 		event({ ok: 'google' });
 
-		$.on(event, (_store: any, event: any) => {
+		$.on(event, (_store, _snapshot, event) => {
 			expect(event).toBeDefined();
 			expect(event.payload).toStrictEqual({ ok: 'google' });
 		});
