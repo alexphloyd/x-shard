@@ -109,7 +109,7 @@ describe('store', () => {
 			expect(snapshot).toEqual(initial);
 			expect(() => (snapshot.map = new Map())).toThrowError();
 		});
-		$.watch((_$, snapshot) => {
+		$.watch((snapshot) => {
 			expect(snapshot).toEqual(initial);
 			expect(() => (snapshot.map = new Map())).toThrowError();
 		});
