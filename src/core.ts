@@ -47,9 +47,10 @@ export function createStore<S extends StoreInterface>(initial: S = {} as S) {
 				}
 			) => void
 		) => {
-			document.addEventListener(event_keys_storage.get(event_emitter), (kernel_event) =>
-				handler($, { payload: kernel_event.detail })
-			);
+			const event_key = event_keys_storage.get(event_emitter);
+			const _handler = (kernel_event: CustomEvent) => handler($, { payload: kernel_event.detail });
+
+			document.addEventListener(event_key, _handler);
 		},
 		/**
 		 * @description $.watch() allows running an effect after the store has changed.
