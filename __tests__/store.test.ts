@@ -104,10 +104,13 @@ describe('store', () => {
 		const $ = createStore(initial);
 		const event = createEvent();
 
-		$.on(event, (_$, snapshot) => {
+		$.on(event, (store, snapshot) => {
+			store.name = 's';
+			expect(snapshot).toEqual(initial);
 			expect(() => (snapshot.map = new Map())).toThrowError();
 		});
 		$.watch((_$, snapshot) => {
+			expect(snapshot).toEqual(initial);
 			expect(() => (snapshot.map = new Map())).toThrowError();
 		});
 
