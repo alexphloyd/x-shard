@@ -58,8 +58,8 @@ export function createStore<S extends StoreInterface>(initial: S = {} as S) {
 		 * @description $.watch() allows running an effect after the store has changed.
 		 * Handler has an access to the store and it's snapshot.
 		 * */
-		watch: (handler: (store: typeof $, snapshot: typeof immutable_proxy) => void) => {
-			document.addEventListener(store_changed_event_key, () => handler($, immutable_proxy));
+		watch: (handler: (snapshot: typeof immutable_proxy) => void) => {
+			document.addEventListener(store_changed_event_key, () => handler(immutable_proxy));
 		},
 	};
 }
@@ -70,6 +70,6 @@ interface StoreInterface {
 
 type EventEmitter<P extends EventPayload | void = void> = ReturnType<typeof createEvent<P>>;
 
-type EventPayload = Record<string, unknown> | string | number | boolean;
+type EventPayload = Record<string, any> | string | number | boolean;
 
 type ExtractEventPayload<Emitter> = Emitter extends EventEmitter<infer P> ? P : never;
