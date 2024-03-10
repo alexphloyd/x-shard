@@ -2,7 +2,6 @@ import { describe, expect, test } from 'vitest';
 import { createEvent, createStore } from '../src/core';
 
 describe('store', () => {
-	const helper_event = createEvent();
 	class Helper {
 		constructor() {}
 		say() {
@@ -11,6 +10,7 @@ describe('store', () => {
 	}
 
 	test('store reference passed to .watch & .on should be mutable', () => {
+		const helper_event = createEvent();
 		const $ = createStore<{ instance?: Helper; text?: string }>({ instance: undefined, text: 'google' });
 		$.on(helper_event, (store) => {
 			store.instance = new Helper();
@@ -76,7 +76,9 @@ describe('store', () => {
 		expect($.get().ok.map).toBeInstanceOf(Map);
 	});
 
-	test('should mutate origin Instance', () => {
+	test('should refer to the origin Instance', () => {
+		const helper_event = createEvent();
+
 		const map_ref = new Map();
 		map_ref.set('ok', 'google');
 
@@ -95,5 +97,20 @@ describe('store', () => {
 		expect(passed_value_in_origin_map).toStrictEqual('world');
 
 		helper_event();
+	});
+
+	test('immutable snapshot in .on | .watch', () => {
+		const initial = { map: new Map(), name: 'test' };
+		const $ = createStore(initial);
+		const event = createEvent();
+
+		$.on(event, (_$, snapshot) => {
+			expect(() => (snapshot.map = new Map())).toThrowError();
+		});
+		$.watch((_$, snapshot) => {
+			expect(() => (snapshot.map = new Map())).toThrowError();
+		});
+
+		event();
 	});
 });

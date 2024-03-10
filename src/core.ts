@@ -42,22 +42,24 @@ export function createStore<S extends StoreInterface>(initial: S = {} as S) {
 			event_emitter: E,
 			handler: (
 				store: typeof $,
+				snapshot: typeof immutable_proxy,
 				event: {
 					payload: ExtractEventPayload<E>;
 				}
 			) => void
 		) => {
 			const event_key = event_keys_storage.get(event_emitter);
-			const _handler = (kernel_event: CustomEvent) => handler($, { payload: kernel_event.detail });
+			const _handler = (kernel_event: CustomEvent) =>
+				handler($, immutable_proxy, { payload: kernel_event.detail });
 
 			document.addEventListener(event_key, _handler);
 		},
 		/**
 		 * @description $.watch() allows running an effect after the store has changed.
-		 * Handler has an access to the store.
+		 * Handler has an access to the store and it's snapshot.
 		 * */
-		watch: (handler: (store: typeof $) => void) => {
-			document.addEventListener(store_changed_event_key, () => handler($));
+		watch: (handler: (store: typeof $, snapshot: typeof immutable_proxy) => void) => {
+			document.addEventListener(store_changed_event_key, () => handler($, immutable_proxy));
 		},
 	};
 }
