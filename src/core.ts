@@ -101,7 +101,7 @@ interface ProxyTarget {
 
 type EventEmitter<P extends EventPayload | void = void> = ReturnType<typeof createEvent<P>>;
 
-type EventPayload = Record<string, any> | string | number | boolean;
+type EventPayload = Record<string, any> | string | number | boolean | BigInt | null;
 
 type ExtractEventPayload<Emitter> = Emitter extends EventEmitter<infer P> ? P : never;
 
