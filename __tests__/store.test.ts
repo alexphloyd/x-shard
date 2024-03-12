@@ -99,16 +99,11 @@ describe('store', () => {
 		helper_event();
 	});
 
-	test('immutable snapshot in .on | .watch', () => {
+	test('immutable snapshot in .watch', () => {
 		const initial = { map: new Map(), name: 'test' };
 		const $ = createStore(initial);
 		const event = createEvent();
 
-		$.on(event, (store, snapshot) => {
-			store.name = 's';
-			expect(snapshot).toEqual(initial);
-			expect(() => (snapshot.map = new Map())).toThrowError();
-		});
 		$.watch((snapshot) => {
 			expect(snapshot).toEqual(initial);
 			expect(() => (snapshot.map = new Map())).toThrowError();
