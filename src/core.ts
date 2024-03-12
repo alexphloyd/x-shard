@@ -33,6 +33,7 @@ export const scheduler = create_scheduler();
 export function createEvent<T extends EventPayload | void = void>() {
 	const key = crypto.randomUUID();
 	const emitter = (payload: T) => {
+		// if ctx.is_event_handler => post_job to emit event after handler completion
 		document.dispatchEvent(new CustomEvent(key, { detail: payload }));
 	};
 
@@ -78,12 +79,12 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 			) => void
 		) => {
 			const event_key = event_keys_storage.get(event_emitter);
-			const _handler = (kernel_event: CustomEvent) => {
-				handler($, { payload: kernel_event.detail });
+			const _handler = (kernel_event: Event) => {
+				handler($, { payload: (kernel_event as CustomEvent).detail });
 				scheduler.execute_jobs(proxy_target);
 			};
 
-			document.addEventListener(event_key as any, _handler); // event key type?
+			document.addEventListener(event_key!, _handler);
 		},
 		/**
 		 * @description $.watch() allows running an effect after the store has changed.
