@@ -62,7 +62,7 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 
 	return {
 		/**
-		 * @description $.get() allow to get an immutable store snapshot
+		 * @description $.get() return an immutable store snapshot
 		 * */
 		get: () => immutable_proxy,
 		/**
@@ -87,8 +87,8 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 			document.addEventListener(event_key!, _handler);
 		},
 		/**
-		 * @description $.watch() allows running an effect after the store has changed.
-		 * Handler has an access to the store and it's snapshot.
+		 * @description $.watch(handler) - runs an effect after the store has changed.
+		 * Handler has an access to immutable snapshot.
 		 * */
 		watch: (handler: (snapshot: typeof immutable_proxy) => void) => {
 			document.addEventListener(store_changed_event_key, () => handler(immutable_proxy));
