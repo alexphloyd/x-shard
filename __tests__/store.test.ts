@@ -40,17 +40,17 @@ describe('store', () => {
 		const snapshot = $.get();
 
 		expect(() => Reflect.deleteProperty(snapshot, 'boolean')).toThrowError();
-		expect(() => (snapshot.string = 'new text')).toThrowError();
-		expect(() => (snapshot.string = {} as any)).toThrowError();
-		expect(() => (snapshot.number = 20)).toThrowError();
-		expect(() => (snapshot.number = 'text' as any)).toThrowError();
-		expect(() => (snapshot.boolean = false)).toThrowError();
-		expect(() => (snapshot.boolean = {} as any)).toThrowError();
-		expect(() => (snapshot.n = 'not null' as any)).toThrowError();
-		expect(() => (snapshot.n = undefined as any)).toThrowError();
-		expect(() => (snapshot.u = 'not undefined' as any)).toThrowError();
-		expect(() => (snapshot.u = undefined)).toThrowError();
-		expect(() => (snapshot.big_int = BigInt(10))).toThrowError();
+		expect(() => ((snapshot as any).string = 'new text')).toThrowError();
+		expect(() => ((snapshot as any).number = 20)).toThrowError();
+		expect(() => ((snapshot as any).string = {} as any)).toThrowError();
+		expect(() => ((snapshot as any).number = 'text' as any)).toThrowError();
+		expect(() => ((snapshot as any).boolean = false)).toThrowError();
+		expect(() => ((snapshot as any).boolean = {} as any)).toThrowError();
+		expect(() => ((snapshot as any).n = 'not null' as any)).toThrowError();
+		expect(() => ((snapshot as any).n = undefined as any)).toThrowError();
+		expect(() => ((snapshot as any).u = 'not undefined' as any)).toThrowError();
+		expect(() => ((snapshot as any).u = undefined)).toThrowError();
+		expect(() => ((snapshot as any).big_int = BigInt(10))).toThrowError();
 		expect(() => ((snapshot.object as any).newProperty = 'new value')).toThrowError();
 		expect(() => (snapshot.deep_object.instance = 'new deep text' as any)).toThrowError();
 
@@ -106,7 +106,7 @@ describe('store', () => {
 
 		$.watch((snapshot) => {
 			expect(snapshot).toEqual(initial);
-			expect(() => (snapshot.map = new Map())).toThrowError();
+			expect(() => ((snapshot as any).map = new Map())).toThrowError();
 		});
 
 		event();

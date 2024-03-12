@@ -8,7 +8,7 @@ export function parse_proxy_target<T>(value: T): T {
 	return value;
 }
 
-export function create_deep_immutable_proxy<T>(target: T): T {
+export function create_deep_immutable_proxy<T>(target: T): Readonly<T> {
 	if (!is_object(target)) {
 		return target;
 	} else {
