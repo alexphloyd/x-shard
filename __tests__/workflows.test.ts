@@ -18,9 +18,11 @@ describe('workflows', () => {
 				$another.get(); // another immutable snapshot
 			}
 
-			const start = store.session; // undefined
+			const start = store.session?.id;
+
 			store.session = event.payload;
-			const end = store.session; // undefined
+
+			const end = store.session?.id;
 
 			expect(start).toEqual(end);
 		});
