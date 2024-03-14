@@ -21,11 +21,11 @@ const create_scheduler = () => {
 		},
 		execute_jobs(target: ProxyTarget) {
 			const target_jobs = jobs.get(target);
-			const event_key = store_changed_event_keys_storage.get(target);
-
-			if (target_jobs?.length && event_key) {
-				target_jobs.forEach((job) => job());
-				system.dispatchEvent(new Event(event_key));
+			if (target_jobs?.length) {
+				for (let i = 0; i < target_jobs.length; ++i) {
+					target_jobs[i]();
+				}
+				system.dispatchEvent(new Event(store_changed_event_keys_storage.get(target)!));
 			}
 		},
 	};
