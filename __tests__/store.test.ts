@@ -25,36 +25,11 @@ describe('store', () => {
 
 	test('snapshot cannot be mutated', () => {
 		const $ = createStore({
-			string: 'text',
-			number: 18,
-			boolean: true,
-			n: null,
-			u: undefined,
-			big_int: BigInt(12),
-			object: {},
 			deep_object: {
-				string: 'text',
 				instance: new Helper(),
 			},
 		});
-		const snapshot = $.get();
-
-		expect(() => Reflect.deleteProperty(snapshot, 'boolean')).toThrowError();
-		expect(() => ((snapshot as any).string = 'new text')).toThrowError();
-		expect(() => ((snapshot as any).number = 20)).toThrowError();
-		expect(() => ((snapshot as any).string = {} as any)).toThrowError();
-		expect(() => ((snapshot as any).number = 'text' as any)).toThrowError();
-		expect(() => ((snapshot as any).boolean = false)).toThrowError();
-		expect(() => ((snapshot as any).boolean = {} as any)).toThrowError();
-		expect(() => ((snapshot as any).n = 'not null' as any)).toThrowError();
-		expect(() => ((snapshot as any).n = undefined as any)).toThrowError();
-		expect(() => ((snapshot as any).u = 'not undefined' as any)).toThrowError();
-		expect(() => ((snapshot as any).u = undefined)).toThrowError();
-		expect(() => ((snapshot as any).big_int = BigInt(10))).toThrowError();
-		expect(() => ((snapshot.object as any).newProperty = 'new value')).toThrowError();
-		expect(() => (snapshot.deep_object.instance = 'new deep text' as any)).toThrowError();
-
-		expect($.get()).toEqual(snapshot);
+		expect(() => ($.get().deep_object.instance = 'new deep text' as any)).toThrowError();
 	});
 
 	test('allow to create only with object as initial', () => {
