@@ -7,6 +7,8 @@ const event_keys_storage = new WeakMap<EventEmitter<any>, string>();
 // K: proxy_target, V: event_key
 const store_changed_event_keys_storage = new WeakMap<ProxyTarget, string>();
 
+const system = new EventTarget();
+
 const create_scheduler = () => {
 	const jobs = new Map<ProxyTarget, Array<Job>>();
 
@@ -23,7 +25,7 @@ const create_scheduler = () => {
 
 			if (target_jobs?.length && event_key) {
 				target_jobs.forEach((job) => job());
-				document.dispatchEvent(new Event(event_key));
+				system.dispatchEvent(new Event(event_key));
 			}
 		},
 	};
@@ -34,7 +36,7 @@ export const scheduler = create_scheduler();
 export function createEvent<T extends EventPayload | void = void>() {
 	const key = crypto.randomUUID();
 	const emitter = (payload: T) => {
-		document.dispatchEvent(new CustomEvent(key, { detail: payload }));
+		system.dispatchEvent(new CustomEvent(key, { detail: payload }));
 	};
 
 	event_keys_storage.set(emitter, key);
@@ -79,7 +81,7 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 				scheduler.execute_jobs(proxy_target);
 			}
 
-			document.addEventListener(event_key!, _handler);
+			system.addEventListener(event_key!, _handler);
 		},
 		/**
 		 * @description $.watch(handler) - runs an effect after the store has changed.
@@ -89,7 +91,7 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 			const _handler = () => {
 				handler(immutable_proxy);
 			};
-			document.addEventListener(store_changed_event_key, _handler);
+			system.addEventListener(store_changed_event_key, _handler);
 		},
 	};
 }
