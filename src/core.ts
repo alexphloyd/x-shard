@@ -1,4 +1,4 @@
-import { create_deep_immutable_proxy, create_deep_writable_proxy, create_writable_proxy } from './proxy';
+import { create_deep_immutable_proxy, create_deep_writable_proxy } from './proxy';
 import { unsafe_parse_object } from './parse-object';
 
 // K: emitter, V: event_key
@@ -48,9 +48,9 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 	scheduler.init_target(proxy_target);
 	store_changed_event_keys_storage.set(proxy_target, store_changed_event_key);
 
-	const $ = create_writable_proxy(proxy_target);
+	const $ = create_deep_writable_proxy(proxy_target);
 
-	const immutable_proxy = proxy_target;
+	const immutable_proxy = create_deep_immutable_proxy(proxy_target);
 
 	return {
 		/**

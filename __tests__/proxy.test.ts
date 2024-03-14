@@ -1,11 +1,11 @@
 import { describe, expect, test, vi } from 'vitest';
 import { create_deep_immutable_proxy } from '../src/proxy';
-import { createEvent, createStore, scheduler } from '../src/core';
+import { createEvent, createStore } from '../src/core';
 
 describe('proxy', () => {
+	class Helper {}
 	test('immutable', () => {
-		class Helper {}
-		const proxy = create_deep_immutable_proxy({
+		const origin = {
 			string: 'text',
 			number: 18,
 			boolean: true,
@@ -20,8 +20,11 @@ describe('proxy', () => {
 				},
 				instance: new Helper(),
 			},
-		});
+		};
+		const proxy = create_deep_immutable_proxy(origin);
+		(origin as any).added = { a: '15' };
 
+		expect(() => ((proxy as any).added.a = 'new text')).toThrowError();
 		expect(() => Reflect.deleteProperty(proxy, 'boolean')).toThrowError();
 		expect(() => ((proxy as any).string = 'new text')).toThrowError();
 		expect(() => ((proxy as any).number = 20)).toThrowError();
@@ -37,36 +40,58 @@ describe('proxy', () => {
 		expect(() => ((proxy.object as any).newProperty = 'new value')).toThrowError();
 		expect(() => (proxy.deep_object.instance = 'new deep text' as any)).toThrowError();
 		expect(() => (proxy.deep_object.d.s = 'new deep text' as any)).toThrowError();
+
+		expect((proxy as any).added.a).toEqual('15');
 	});
 
-	test('deep mutation should trigger change_event', () => {
+	test('flat mutable proxy', () => {
 		const event = createEvent();
 		const $ = createStore({
-			object: {
-				deep: 'test',
-			},
 			prop: '12',
 		});
 
 		$.on(event, (store) => {
 			store.prop = '12';
-			// store.object.deep = 'none';
-			// store.object.deep = 'second';
 		});
 
-		// const watch_handler = vi.fn((snapshot: ReturnType<(typeof $)['get']>) => {
-		// 	expect(snapshot.object.deep).toEqual('second');
-		// });
-		// $.watch(watch_handler);
-		$.watch((s) => {
-			console.log(s);
+		const watch_handler = vi.fn((snapshot: ReturnType<(typeof $)['get']>) => {
+			expect(snapshot.prop).toEqual('12');
 		});
+		$.watch(watch_handler);
 
 		event();
 
-		const spy_scheduler = vi.spyOn(scheduler, 'execute_jobs');
-		expect(spy_scheduler).toHaveBeenCalledOnce();
-		// console.log($.get());
-		// expect(watch_handler).toHaveBeenCalledOnce();
+		expect(watch_handler).toHaveBeenCalledOnce();
+	});
+
+	test('deep mutable', () => {
+		const event = createEvent();
+		const $ = createStore({
+			object: {
+				deep: 'test',
+				d: {
+					a: 'b',
+				},
+			},
+		});
+
+		$.on(event, (store) => {
+			store.object.deep = 'none';
+			store.object.d.a = 'c';
+
+			(store as any).custom = { a: '12' };
+		});
+
+		const watch_handler = vi.fn((snapshot: ReturnType<(typeof $)['get']>) => {
+			expect((snapshot as any).custom.a).toEqual('12');
+
+			expect(snapshot.object.deep).toEqual('none');
+			expect(snapshot.object.d.a).toEqual('c');
+		});
+		$.watch(watch_handler);
+
+		event();
+
+		expect(watch_handler).toHaveBeenCalledOnce();
 	});
 });
