@@ -9,7 +9,7 @@ describe('store', () => {
 		}
 	}
 
-	test('store reference passed to .watch & .on should be mutable', () => {
+	test('mutable $ in .on', () => {
 		const helper_event = createEvent();
 		const $ = createStore<{ instance?: Helper; text?: string }>({ instance: undefined, text: 'google' });
 		$.on(helper_event, (store) => {
@@ -19,17 +19,9 @@ describe('store', () => {
 		helper_event();
 
 		const helper_instance_in_store = $.get().instance;
+
 		expect(helper_instance_in_store?.say()).toEqual('test');
 		expect($.get().text).toBeUndefined();
-	});
-
-	test('snapshot cannot be mutated', () => {
-		const $ = createStore({
-			deep_object: {
-				instance: new Helper(),
-			},
-		});
-		expect(() => ($.get().deep_object.instance = 'new deep text' as any)).toThrowError();
 	});
 
 	test('allow to create only with object as initial', () => {
@@ -74,7 +66,16 @@ describe('store', () => {
 		helper_event();
 	});
 
-	test('immutable snapshot in .watch', () => {
+	test('snapshot cannot be mutated', () => {
+		const $ = createStore({
+			deep_object: {
+				instance: new Helper(),
+			},
+		});
+		expect(() => ($.get().deep_object.instance = 'new deep text' as any)).toThrowError();
+	});
+
+	test('snapshot in .watch', () => {
 		const initial = { map: new Map(), name: 'test' };
 		const $ = createStore(initial);
 		const event = createEvent();
