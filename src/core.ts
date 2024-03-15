@@ -10,22 +10,23 @@ const store_changed_event_keys_storage = new WeakMap<ProxyTarget, string>();
 const system = new EventTarget();
 
 const create_scheduler = () => {
-	const jobs = new Map<ProxyTarget, Array<Job>>();
-
+	const jobs = new WeakMap<ProxyTarget, Array<Job>>();
 	return {
 		init_target(target: ProxyTarget) {
 			jobs.set(target, []);
 		},
 		post_job(target: ProxyTarget, job: Job) {
-			jobs.get(target)?.push(job);
+			jobs.get(target)!.push(job);
 		},
 		execute_jobs(target: ProxyTarget) {
 			const target_jobs = jobs.get(target);
 			if (target_jobs?.length) {
 				for (let i = 0; i < target_jobs.length; ++i) {
-					target_jobs[i]();
+					const { target, prop, value } = target_jobs[i];
+					target[prop] = value;
 				}
 				system.dispatchEvent(new Event(store_changed_event_keys_storage.get(target)!));
+				jobs.set(target, []);
 			}
 		},
 	};
@@ -106,4 +107,8 @@ export type EventPayload = Record<string, any> | string | number | boolean | Big
 
 export type ExtractEventPayload<Emitter> = Emitter extends EventEmitter<infer P> ? P : never;
 
-type Job = () => void;
+type Job = {
+	target: any;
+	prop: any;
+	value: any;
+};

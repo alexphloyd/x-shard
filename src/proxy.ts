@@ -13,7 +13,7 @@ export function create_deep_writable_proxy<T extends ProxyTarget>(proxy_target: 
 			const value = is_object(passed_value)
 				? create_deep_writable_proxy(proxy_target, passed_value)
 				: passed_value;
-			scheduler.post_job(proxy_target, () => (target[prop] = value));
+			scheduler.post_job(proxy_target, { target, prop, value });
 			return true;
 		},
 	}) as T;
