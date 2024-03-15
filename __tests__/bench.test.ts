@@ -3,39 +3,11 @@ import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { createStore, createEvent } from '../src/core';
 
 describe('bench', () => {
-	const BENCH_TIMES = 10_000;
-
-	test('s', () => {
-		console.log('---------> update 4 store', BENCH_TIMES + ' times');
-		console.time('s');
-
-		const event = createEvent<string>();
-		const $ = createStore({ a: { b: { c: ' 12', d: '2', e: '2' } } });
-		const $2 = createStore({ a: { b: { c: ' 12', d: '2', e: '2' } } });
-		const $3 = createStore({ a: { b: { c: ' 12', d: '2', e: '2' } } });
-		const $4 = createStore({ a: { b: { c: ' 12', d: '2', e: '2' } } });
-
-		$.on(event, (store, event) => {
-			store.a.b.c = event.payload;
-		});
-		$2.on(event, (store, event) => {
-			store.a.b.c = event.payload;
-		});
-		$3.on(event, (store, event) => {
-			store.a.b.c = event.payload;
-		});
-		$4.on(event, (store, event) => {
-			store.a.b.c = event.payload;
-		});
-
-		for (let i = 0; i < BENCH_TIMES; ++i) {
-			event('test');
-		}
-
-		console.timeEnd('s');
-	});
+	const BENCH_TIMES = 35_000;
 
 	test('redux', () => {
+		console.log('---------> update 4 store', BENCH_TIMES + ' times');
+
 		console.time('redux');
 		const initialState = { a: { b: { c: ' 12', d: '2', e: '2' } } };
 		const s = createSlice({
@@ -91,6 +63,35 @@ describe('bench', () => {
 			store.dispatch(s4.actions.updateTest('s'));
 		}
 		console.timeEnd('redux');
+	});
+
+	test('s', () => {
+		console.time('s');
+
+		const event = createEvent<string>();
+		const $ = createStore({ a: { b: { c: ' 12', d: '2', e: '2' } } });
+		const $2 = createStore({ a: { b: { c: ' 12', d: '2', e: '2' } } });
+		const $3 = createStore({ a: { b: { c: ' 12', d: '2', e: '2' } } });
+		const $4 = createStore({ a: { b: { c: ' 12', d: '2', e: '2' } } });
+
+		$.on(event, (store, event) => {
+			store.a.b.c = event.payload;
+		});
+		$2.on(event, (store, event) => {
+			store.a.b.c = event.payload;
+		});
+		$3.on(event, (store, event) => {
+			store.a.b.c = event.payload;
+		});
+		$4.on(event, (store, event) => {
+			store.a.b.c = event.payload;
+		});
+
+		for (let i = 0; i < BENCH_TIMES; ++i) {
+			event('test');
+		}
+
+		console.timeEnd('s');
 	});
 
 	// test('s-2', () => {
