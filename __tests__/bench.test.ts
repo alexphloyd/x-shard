@@ -3,7 +3,7 @@ import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { createStore, createEvent } from '../src/core';
 
 describe('bench', () => {
-	const BENCH_TIMES = 35_000;
+	const BENCH_TIMES = 30_000;
 
 	test('s', () => {
 		console.log('---------> update 4 store', BENCH_TIMES + ' times');
@@ -32,6 +32,10 @@ describe('bench', () => {
 			event('test');
 		}
 
+		// STORE CHANGED
+		// $.watch(() => {});
+		// react - useSyncExternalStore
+
 		console.timeEnd('s');
 	});
 
@@ -44,6 +48,7 @@ describe('bench', () => {
 			reducers: {
 				updateTest: (state, action) => {
 					state.a.b.c = action.payload;
+					console.log(state.a.b.c);
 				},
 			},
 		});
@@ -84,7 +89,7 @@ describe('bench', () => {
 			},
 		});
 
-		for (let i = 0; i < BENCH_TIMES; ++i) {
+		for (let i = 0; i < 1; ++i) {
 			store.dispatch(s.actions.updateTest('s'));
 			store.dispatch(s2.actions.updateTest('s'));
 			store.dispatch(s3.actions.updateTest('s'));

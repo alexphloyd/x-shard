@@ -21,8 +21,8 @@ describe('proxy', () => {
 				instance: new Helper(),
 			},
 		};
-		const proxy = create_deep_immutable_proxy(origin);
 		(origin as any).added = { a: '15' };
+		const proxy = create_deep_immutable_proxy(origin);
 
 		expect(() => ((proxy as any).added.a = 'new text')).toThrowError();
 		expect(() => Reflect.deleteProperty(proxy, 'boolean')).toThrowError();

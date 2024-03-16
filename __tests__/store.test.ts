@@ -76,9 +76,12 @@ describe('store', () => {
 	});
 
 	test('snapshot in .watch', () => {
-		const initial = { map: new Map(), name: 'test' };
+		const initial = { map: new Map(), name: {} };
 		const $ = createStore(initial);
 		const event = createEvent();
+		$.on(event, (store) => {
+			store.name = '12';
+		});
 
 		$.watch((snapshot) => {
 			expect(snapshot).toEqual(initial);
