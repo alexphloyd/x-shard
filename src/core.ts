@@ -20,7 +20,6 @@ const create_scheduler = () => {
 		},
 		execute_jobs(target: ProxyTarget) {
 			const target_jobs = jobs.get(target);
-			console.log(target_jobs);
 			if (target_jobs?.length) {
 				for (let i = 0; i < target_jobs.length; ++i) {
 					const { target, prop, value } = target_jobs[i];
