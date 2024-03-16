@@ -14,12 +14,12 @@ export default defineConfig({
 			dir: './node_modules/.vitest',
 		},
 
-		environment: 'jsdom',
-		environmentOptions: {
-			jsdom: {
-				resources: 'usable',
-			},
-		},
+		// environment: 'jsdom',
+		// environmentOptions: {
+		// 	jsdom: {
+		// 		resources: 'usable',
+		// 	},
+		// },
 
 		include: ['__tests__/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
 		setupFiles: ['__tests__/setup.js'],
