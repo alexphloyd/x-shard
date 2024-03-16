@@ -19,7 +19,7 @@ export function create_deep_writable_proxy<T extends ProxyTarget>(proxy_target: 
 	}) as T;
 }
 
-export function create_deep_immutable_proxy<T>(target: T): T {
+export function create_deep_immutable_proxy<T>(target: T): Readonly<T> {
 	if (!is_object(target)) {
 		return target;
 	} else {
