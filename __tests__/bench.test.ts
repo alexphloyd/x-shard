@@ -1,10 +1,9 @@
 import { describe, test } from 'vitest';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { createStore, createEvent } from '../src/core';
-import { signal } from '@preact/signals';
 
 describe('bench', () => {
-	const BENCH_TIMES = 35_000;
+	const BENCH_TIMES = 100_000;
 
 	test('s', () => {
 		console.log('---------> update 4 store', BENCH_TIMES + ' times');
@@ -92,21 +91,5 @@ describe('bench', () => {
 			store.dispatch(s4.actions.updateTest('s'));
 		}
 		console.timeEnd('redux');
-	});
-
-	test('signal', () => {
-		const store = signal({ prop: '12' });
-
-		function exec() {
-			store.value.prop = '15';
-			store.value.prop = '15';
-			store.value.prop = '15';
-			store.value.prop = '15';
-			store.value.prop = '15';
-
-			console.log(store.value);
-		}
-
-		exec();
 	});
 });
