@@ -23,23 +23,28 @@ describe('scheduling', () => {
 		expect($.get().session?.id).toEqual(12);
 	});
 
-	test('playground', () => {
+	test('should emit one CHANGED event', async () => {
 		const $ = createStore<{ session?: Session }>({ session: undefined });
 
 		const session_defined = createEvent<Session>();
 		const try_certificate = createEvent();
 
 		$.on(session_defined, (store, event) => {
-			store.session = event.payload; // post_job
+			store.session = event.payload; // set session
 
-			try_certificate(); // execute -- ?
+			try_certificate();
+
+			if (store.session.isVerified) {
+				// do smth
+			}
 		});
 
-		$.on(try_certificate, (store) => {});
+		$.on(try_certificate, (store) => {
+			if (store.session) {
+				store.session.isVerified = true;
+			}
+		});
 
 		session_defined({ id: 12, isVerified: false });
-		try_certificate();
-
-		console.log('hello');
 	});
 });
