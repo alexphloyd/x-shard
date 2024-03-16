@@ -1,10 +1,8 @@
 import { create_deep_immutable_proxy, create_deep_writable_proxy } from './proxy';
 import { unsafe_parse_object } from './parse-object';
 
-// K: emitter, V: event_key
 const event_keys_storage = new WeakMap<EventEmitter<any>, string>();
 
-// K: proxy_target, V: event_key
 const store_changed_event_keys_storage = new WeakMap<ProxyTarget, string>();
 
 const system = new EventTarget();
