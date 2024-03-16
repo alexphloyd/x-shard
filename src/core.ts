@@ -20,13 +20,14 @@ const create_scheduler = () => {
 		},
 		execute_jobs(target: ProxyTarget) {
 			const target_jobs = jobs.get(target);
+			console.log(target_jobs);
 			if (target_jobs?.length) {
 				for (let i = 0; i < target_jobs.length; ++i) {
 					const { target, prop, value } = target_jobs[i];
 					target[prop] = value;
 				}
-				system.dispatchEvent(new Event(store_changed_event_keys_storage.get(target)!));
 				jobs.set(target, []);
+				system.dispatchEvent(new CustomEvent(store_changed_event_keys_storage.get(target)!));
 			}
 		},
 	};
@@ -74,6 +75,7 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 			) => void
 		) => {
 			const event_key = event_keys_storage.get(event_emitter);
+			if (!event_key) return;
 
 			function _handler(kernel_event: Event) {
 				handler($, {
@@ -82,7 +84,7 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 				scheduler.execute_jobs(proxy_target);
 			}
 
-			system.addEventListener(event_key!, _handler);
+			system.addEventListener(event_key, _handler);
 		},
 		/**
 		 * @description $.watch(handler) - runs an effect after the store has changed.
@@ -112,3 +114,5 @@ type Job = {
 	prop: any;
 	value: any;
 };
+
+type BrowserEvent = `window::${keyof WindowEventMap}` | `document::${keyof DocumentEventMap}`;
