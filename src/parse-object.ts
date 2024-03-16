@@ -1,4 +1,4 @@
-export function is_object<T extends Record<string, any> = Record<string, any>>(value: unknown): value is T {
+export function is_object(value: unknown): value is object {
 	return value != null && value.constructor.name === 'Object';
 }
 
