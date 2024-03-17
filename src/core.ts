@@ -1,36 +1,13 @@
 import { create_deep_immutable_proxy, create_deep_writable_proxy } from './proxy';
 import { unsafe_parse_object } from './parse-object';
 
-const event_keys_storage = new WeakMap<EventEmitter<any>, string>();
-
-const store_changed_event_keys_storage = new WeakMap<ProxyTarget, string>();
-
 const system = new EventTarget();
 
-const create_scheduler = () => {
-	const jobs = new WeakMap<ProxyTarget, Array<Job>>();
-	return {
-		init_target(target: ProxyTarget) {
-			jobs.set(target, []);
-		},
-		post_job(target: ProxyTarget, job: Job) {
-			jobs.get(target)!.push(job);
-		},
-		execute_jobs(target: ProxyTarget) {
-			const target_jobs = jobs.get(target);
-			if (target_jobs?.length) {
-				for (let i = 0; i < target_jobs.length; ++i) {
-					const { target, prop, value } = target_jobs[i];
-					target[prop] = value;
-				}
-				jobs.set(target, []);
-				system.dispatchEvent(new CustomEvent(store_changed_event_keys_storage.get(target)!));
-			}
-		},
-	};
-};
+const event_keys_storage = new WeakMap<EventEmitter<any>, string>();
 
-export const scheduler = create_scheduler();
+const store_mutated_event_keys_storage = new WeakMap<ProxyTarget, string>();
+
+export const mutated_proxies_map = new WeakMap<ProxyTarget, boolean>();
 
 export function createEvent<T extends EventPayload | void = void>() {
 	const key = crypto.randomUUID();
@@ -43,15 +20,16 @@ export function createEvent<T extends EventPayload | void = void>() {
 }
 
 export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
-	const store_changed_event_key = crypto.randomUUID();
+	const store_mutated_event_key = crypto.randomUUID();
 	const proxy_target = unsafe_parse_object(initial);
 
-	scheduler.init_target(proxy_target);
-	store_changed_event_keys_storage.set(proxy_target, store_changed_event_key);
+	store_mutated_event_keys_storage.set(proxy_target, store_mutated_event_key);
 
 	const $ = create_deep_writable_proxy(proxy_target);
 
 	const immutable_proxy = create_deep_immutable_proxy(proxy_target);
+
+	let is_handling_process = false;
 
 	return {
 		/**
@@ -75,10 +53,24 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 			if (!event_key) return;
 
 			function _handler(kernel_event: Event) {
+				let is_child_process = is_handling_process;
+
+				if (!is_child_process) {
+					is_handling_process = true;
+				}
+
 				handler($, {
 					payload: (kernel_event as CustomEvent).detail,
 				});
-				scheduler.execute_jobs(proxy_target);
+
+				if (!is_child_process) {
+					if (mutated_proxies_map.get(proxy_target)) {
+						system.dispatchEvent(new CustomEvent(store_mutated_event_key));
+						mutated_proxies_map.set(proxy_target, false);
+					}
+
+					is_handling_process = false;
+				}
 			}
 
 			system.addEventListener(event_key, _handler);
@@ -91,7 +83,7 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 			const _handler = () => {
 				handler(immutable_proxy);
 			};
-			system.addEventListener(store_changed_event_key, _handler);
+			system.addEventListener(store_mutated_event_key, _handler);
 		},
 	};
 }
@@ -105,11 +97,5 @@ export type EventEmitter<P extends EventPayload | void = void> = ReturnType<type
 export type EventPayload = Record<string, any> | string | number | boolean | BigInt | null;
 
 export type ExtractEventPayload<Emitter> = Emitter extends EventEmitter<infer P> ? P : never;
-
-type Job = {
-	target: any;
-	prop: any;
-	value: any;
-};
 
 type BrowserEvent = `window::${keyof WindowEventMap}` | `document::${keyof DocumentEventMap}`;

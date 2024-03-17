@@ -1,4 +1,4 @@
-import { ProxyTarget, scheduler } from './core';
+import { ProxyTarget, mutated_proxies_map } from './core';
 import { is_object } from './parse-object';
 
 export function create_deep_writable_proxy<T extends ProxyTarget>(proxy_target: T, deep?: unknown): T {
@@ -13,7 +13,10 @@ export function create_deep_writable_proxy<T extends ProxyTarget>(proxy_target: 
 			const value = is_object(passed_value)
 				? create_deep_writable_proxy(proxy_target, passed_value)
 				: passed_value;
-			scheduler.post_job(proxy_target, { target, prop, value });
+
+			target[prop] = value;
+			mutated_proxies_map.set(proxy_target, true);
+
 			return true;
 		},
 	}) as T;
