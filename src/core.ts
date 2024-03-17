@@ -68,7 +68,7 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 						system.dispatchEvent(new CustomEvent(store_mutated_event_key));
 						mutated_proxies_map.set(proxy_target, false);
 					}
-
+					// finish handling process after executing all $ watchers
 					is_handling_process = false;
 				}
 			}
