@@ -1,9 +1,9 @@
 {
-	"name": "xrp",
+	"name": "xps",
 	"author": "arch1i",
 	"version": "0.0.1",
-	"license": "ISC",
 	"description": "event-driven reactive store",
+	"license": "ISC",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"files": [
