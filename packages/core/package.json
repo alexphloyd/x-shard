@@ -2,8 +2,8 @@
 	"name": "x-shard",
 	"author": "arch1i",
 	"version": "0.0.1",
-	"description": "Event driven reactive shards",
-	"license": "ISC",
+	"description": "Event driven reactive shards.",
+	"license": "MIT",
 	"main": "./dist/core.cjs",
 	"module": "./dist/core.js",
 	"types": "./dist/core.d.ts",
@@ -12,5 +12,6 @@
 		"./dist/core.d.cts",
 		"./dist/core.js",
 		"./dist/core.d.ts"
-	]
+	],
+	"dependencies": {}
 }
