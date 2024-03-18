@@ -1,4 +1,5 @@
 import { create_deep_immutable_proxy, create_deep_writable_proxy } from './proxy';
+import { mutated_proxies_map } from './maps';
 import { unsafe_parse_object } from './parse-object';
 
 const system = new EventTarget();
@@ -6,8 +7,6 @@ const system = new EventTarget();
 const event_keys_storage = new WeakMap<EventEmitter<any>, string>();
 
 const store_mutated_event_keys_storage = new WeakMap<ProxyTarget, string>();
-
-export const mutated_proxies_map = new WeakMap<ProxyTarget, boolean>();
 
 export function createEvent<T extends EventPayload | void = void>() {
 	const key = crypto.randomUUID();

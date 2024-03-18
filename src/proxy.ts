@@ -1,4 +1,5 @@
-import { ProxyTarget, mutated_proxies_map } from './core';
+import { type ProxyTarget } from './core';
+import { mutated_proxies_map } from './maps';
 import { is_object } from './parse-object';
 
 export function create_deep_writable_proxy<T extends ProxyTarget>(proxy_target: T, deep?: unknown): T {
