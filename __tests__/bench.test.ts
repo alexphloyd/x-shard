@@ -1,13 +1,14 @@
 import { describe, test } from 'vitest';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
-import { createStore, createEvent } from '../packages/core/src/core';
+import { createEvent as create_effector_event, createStore as create_effector_store } from 'effector';
+import { createStore, createEvent } from '../packages/core/dist/core';
 
 describe('bench', () => {
 	const BENCH_TIMES = 50_000;
 
-	test('s', () => {
+	test('x-shard', () => {
 		console.log('---------> update 4 stores', BENCH_TIMES + ' times');
-		console.time('s');
+		console.time('x-shard');
 
 		const event = createEvent<string>();
 		const $ = createStore({ a: { b: { c: ' 12', d: '2', e: '2' } } });
@@ -32,10 +33,34 @@ describe('bench', () => {
 			event('test');
 		}
 
-		console.timeEnd('s');
+		console.timeEnd('x-shard');
 	});
 
-	test('redux', () => {
+	test('compare', () => {
+		console.time('effector');
+		const event = create_effector_event<string>();
+		const $ = create_effector_store({ a: { b: { c: ' 12', d: '2', e: '2' } } });
+		const $2 = create_effector_store({ a: { b: { c: ' 12', d: '2', e: '2' } } });
+		const $3 = create_effector_store({ a: { b: { c: ' 12', d: '2', e: '2' } } });
+		const $4 = create_effector_store({ a: { b: { c: ' 12', d: '2', e: '2' } } });
+
+		$.on(event, (store, payload) => {
+			return { a: { b: { ...store.a.b, c: payload } } };
+		});
+		$2.on(event, (store, payload) => {
+			return { a: { b: { ...store.a.b, c: payload } } };
+		});
+		$3.on(event, (store, payload) => {
+			return { a: { b: { ...store.a.b, c: payload } } };
+		});
+		$4.on(event, (store, payload) => {
+			return { a: { b: { ...store.a.b, c: payload } } };
+		});
+		for (let i = 0; i < BENCH_TIMES; ++i) {
+			event('test');
+		}
+		console.timeEnd('effector');
+
 		console.time('redux');
 		const initialState = { a: { b: { c: ' 12', d: '2', e: '2' } } };
 		const s = createSlice({
@@ -91,199 +116,5 @@ describe('bench', () => {
 			store.dispatch(s4.actions.updateTest('s'));
 		}
 		console.timeEnd('redux');
-	});
-
-	test('s-2', () => {
-		console.log('---------> update 1 of 4 stores', BENCH_TIMES + ' times');
-
-		console.time('s-2');
-
-		const event = createEvent<string>();
-		const $ = createStore({ a: { b: { c: ' 12', d: '2', e: '2' } } });
-		createStore({ a: { b: { c: ' 12', d: '2', e: '2' } } });
-		createStore({ a: { b: { c: ' 12', d: '2', e: '2' } } });
-		createStore({ a: { b: { c: ' 12', d: '2', e: '2' } } });
-
-		$.on(event, (store, event) => {
-			store.a.b.c = event.payload;
-		});
-
-		for (let i = 0; i < BENCH_TIMES; ++i) {
-			event('test');
-		}
-
-		console.timeEnd('s-2');
-	});
-
-	test('redux', () => {
-		console.time('redux-2');
-		const initialState = { a: { b: { c: ' 12', d: '2', e: '2' } } };
-		const s = createSlice({
-			name: 's',
-			initialState,
-			reducers: {
-				updateTest: (state, action) => {
-					state.a.b.c = action.payload;
-				},
-			},
-		});
-		const s2 = createSlice({
-			name: 's2',
-			initialState,
-			reducers: {
-				updateTest: (state, action) => {
-					state.a.b.c = action.payload;
-				},
-			},
-		});
-		const s3 = createSlice({
-			name: 's3',
-			initialState,
-			reducers: {
-				updateTest: (state, action) => {
-					state.a.b.c = action.payload;
-				},
-			},
-		});
-		const s4 = createSlice({
-			name: 's4',
-			initialState,
-			reducers: {
-				updateTest: (state, action) => {
-					state.a.b.c = action.payload;
-				},
-			},
-		});
-
-		const store = configureStore({
-			reducer: {
-				s: s.reducer,
-				s2: s2.reducer,
-				s3: s3.reducer,
-				s4: s4.reducer,
-			},
-		});
-
-		for (let i = 0; i < BENCH_TIMES; ++i) {
-			store.dispatch(s.actions.updateTest('s'));
-		}
-		console.timeEnd('redux-2');
-	});
-
-	test('s-3', () => {
-		console.log('---------> execute handler without mutations', BENCH_TIMES + ' times');
-
-		console.time('s-3');
-
-		const event = createEvent<string>();
-		const $ = createStore({ a: { b: { c: ' 12', d: '2', e: '2' } } });
-		createStore({ a: { b: { c: ' 12', d: '2', e: '2' } } });
-		createStore({ a: { b: { c: ' 12', d: '2', e: '2' } } });
-		createStore({ a: { b: { c: ' 12', d: '2', e: '2' } } });
-
-		$.on(event, (_store, _event) => {});
-
-		for (let i = 0; i < BENCH_TIMES; ++i) {
-			event('test');
-		}
-
-		console.timeEnd('s-3');
-	});
-
-	test('redux-3', () => {
-		console.time('redux-3');
-		const initialState = { a: { b: { c: ' 12', d: '2', e: '2' } } };
-		const s = createSlice({
-			name: 's',
-			initialState,
-			reducers: {
-				updateTest: (_state, _action) => {},
-			},
-		});
-		const s2 = createSlice({
-			name: 's2',
-			initialState,
-			reducers: {
-				updateTest: (state, action) => {
-					state.a.b.c = action.payload;
-				},
-			},
-		});
-		const s3 = createSlice({
-			name: 's3',
-			initialState,
-			reducers: {
-				updateTest: (state, action) => {
-					state.a.b.c = action.payload;
-				},
-			},
-		});
-		const s4 = createSlice({
-			name: 's4',
-			initialState,
-			reducers: {
-				updateTest: (state, action) => {
-					state.a.b.c = action.payload;
-				},
-			},
-		});
-
-		const store = configureStore({
-			reducer: {
-				s: s.reducer,
-				s2: s2.reducer,
-				s3: s3.reducer,
-				s4: s4.reducer,
-			},
-		});
-
-		for (let i = 0; i < BENCH_TIMES; ++i) {
-			store.dispatch(s.actions.updateTest('s'));
-		}
-		console.timeEnd('redux-3');
-	});
-
-	test('s-3', () => {
-		console.log('---------> single store mutation', BENCH_TIMES + ' times ');
-
-		console.time('s-4');
-
-		const event = createEvent<string>();
-		const $ = createStore({ a: { b: { c: ' 12', d: '2', e: '2' } } });
-
-		$.on(event, (store, event) => {
-			store.a.b.c = event.payload;
-		});
-
-		for (let i = 0; i < BENCH_TIMES; ++i) {
-			event('test');
-		}
-
-		console.timeEnd('s-4');
-	});
-
-	test('redux-3', () => {
-		console.time('redux-3');
-		const initialState = { a: { b: { c: ' 12', d: '2', e: '2' } } };
-		const s = createSlice({
-			name: 's',
-			initialState,
-			reducers: {
-				updateTest: (state, action) => {
-					state.a.b.c = action.payload;
-				},
-			},
-		});
-
-		const store = configureStore({
-			reducer: {
-				s: s.reducer,
-			},
-		});
-
-		for (let i = 0; i < BENCH_TIMES; ++i) {
-			store.dispatch(s.actions.updateTest('s'));
-		}
-		console.timeEnd('redux-3');
 	});
 });

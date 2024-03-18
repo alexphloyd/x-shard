@@ -10,9 +10,6 @@ export default defineConfig({
 		globals: true,
 
 		reporters: ['verbose'],
-		cache: {
-			dir: './node_modules/.vitest',
-		},
 
 		// environment: 'jsdom',
 		// environmentOptions: {
