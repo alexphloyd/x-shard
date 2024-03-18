@@ -3,10 +3,10 @@ import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { createStore, createEvent } from '../packages/core/src/core';
 
 describe('bench', () => {
-	const BENCH_TIMES = 35_000;
+	const BENCH_TIMES = 50_000;
 
 	test('s', () => {
-		console.log('---------> update 4 store', BENCH_TIMES + ' times');
+		console.log('---------> update 4 stores', BENCH_TIMES + ' times');
 		console.time('s');
 
 		const event = createEvent<string>();
@@ -94,7 +94,7 @@ describe('bench', () => {
 	});
 
 	test('s-2', () => {
-		console.log('---------> update 1 store', BENCH_TIMES + ' times');
+		console.log('---------> update 1 of 4 stores', BENCH_TIMES + ' times');
 
 		console.time('s-2');
 
