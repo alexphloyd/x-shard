@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
-import { createEvent, createStore } from '../src/core';
+import { createStore, createEvent } from '../packages/core/src/core';
 
 describe('scheduling', () => {
 	interface Session {

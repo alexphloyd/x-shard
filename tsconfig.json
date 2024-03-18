@@ -21,9 +21,9 @@
 		"noFallthroughCasesInSwitch": true,
 
 		"paths": {
-			"~/*": ["src/*"]
+			"~/*": ["packages/core/src/*"]
 		}
 	},
-	"include": ["src/index.ts"],
+	"include": ["packages/core/src/*"],
 	"exclude": ["node_modules", "dist"]
 }

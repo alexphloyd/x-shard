@@ -1,6 +1,6 @@
 import { describe, test } from 'vitest';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
-import { createStore, createEvent } from '../src/core';
+import { createStore, createEvent } from '../packages/core/src/core';
 
 describe('bench', () => {
 	const BENCH_TIMES = 35_000;
