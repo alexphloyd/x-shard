@@ -2,7 +2,7 @@
 	"name": "x-shard-dev",
 	"author": "arch1i",
 	"description": "Event driven reactive store",
-	"license": "ISC",
+	"license": "MIT",
 	"type": "module",
 	"scripts": {
 		"build:core": "npx tsup --config='packages/core/core.build-config.ts'",
