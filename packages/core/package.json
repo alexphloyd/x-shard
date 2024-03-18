@@ -2,7 +2,7 @@
 	"name": "x-shard",
 	"author": "arch1i",
 	"version": "0.0.1",
-	"description": "Event driven reactive store",
+	"description": "Event driven reactive shards",
 	"license": "ISC",
 	"main": "./dist/core.cjs",
 	"module": "./dist/core.js",
