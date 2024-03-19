@@ -11,7 +11,9 @@
 		"./dist/core.cjs",
 		"./dist/core.d.cts",
 		"./dist/core.js",
-		"./dist/core.d.ts"
+		"./dist/core.d.ts",
+		"./README.md",
+		"./LICENSE"
 	],
 	"dependencies": {}
 }
