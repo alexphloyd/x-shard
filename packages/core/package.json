@@ -2,7 +2,7 @@
 	"name": "x-shard",
 	"author": "arch1i",
 	"version": "0.0.1",
-	"description": "Event driven reactive shards.",
+	"description": "Event-driven tool to describe behavior rely on either domain or browser events.",
 	"license": "MIT",
 	"main": "./dist/core.cjs",
 	"module": "./dist/core.js",
