@@ -1,5 +1,7 @@
 # x-shard
 
+<a href="https://www.npmjs.com/package/x-shard" target="_blank">npm</a>
+
 Event-driven tool to describe behavior rely on either domain or browser events.
 ```plaintext
 yarn add x-shard
