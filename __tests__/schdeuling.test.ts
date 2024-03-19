@@ -96,22 +96,26 @@ describe('scheduling', () => {
 			store.session = { id: 401, isVerified: false };
 		});
 
+		$.on(aside, (store) => {
+			expect(store.session?.id).toEqual(401);
+
+			if (store.session) {
+				store.session.id = 0;
+			}
+		});
+
 		$.watch((snapshot) => {
 			if (snapshot.session?.check) {
 				breaker();
 			}
 		});
 
-		$.on(aside, (store) => {
-			expect(store.session?.id).toEqual(401);
-		});
-
 		session_defined({ id: 12, isVerified: false });
 		aside();
 
 		const mutated_session_id = $.get().session?.id;
-		expect(mutated_session_id).toEqual(401);
+		expect(mutated_session_id).toEqual(0);
 
-		expect(handler).toHaveBeenCalledOnce();
+		expect(handler).toHaveBeenCalledTimes(2);
 	});
 });
