@@ -41,12 +41,7 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 		 * */
 		on: <E extends EventEmitter<any>>(
 			event_emitter: E,
-			handler: (
-				store: typeof $,
-				event: {
-					payload: ExtractEventPayload<E>;
-				}
-			) => void
+			handler: (store: typeof $, payload: ExtractEventPayload<E>) => void
 		) => {
 			const event_key = event_keys_storage.get(event_emitter);
 			if (!event_key) return;
@@ -58,9 +53,7 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 					is_handling_process = true;
 				}
 
-				handler($, {
-					payload: (kernel_event as CustomEvent).detail,
-				});
+				handler($, (kernel_event as CustomEvent).detail);
 
 				if (!is_child_process) {
 					if (mutated_proxies_map.get(proxy_target)) {

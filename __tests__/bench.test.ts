@@ -16,17 +16,17 @@ describe('bench', () => {
 		const $3 = createStore({ a: { b: { c: ' 12', d: '2', e: '2' } } });
 		const $4 = createStore({ a: { b: { c: ' 12', d: '2', e: '2' } } });
 
-		$.on(event, (store, event) => {
-			store.a.b.c = event.payload;
+		$.on(event, (store, payload) => {
+			store.a.b.c = payload;
 		});
-		$2.on(event, (store, event) => {
-			store.a.b.c = event.payload;
+		$2.on(event, (store, payload) => {
+			store.a.b.c = payload;
 		});
-		$3.on(event, (store, event) => {
-			store.a.b.c = event.payload;
+		$3.on(event, (store, payload) => {
+			store.a.b.c = payload;
 		});
-		$4.on(event, (store, event) => {
-			store.a.b.c = event.payload;
+		$4.on(event, (store, payload) => {
+			store.a.b.c = payload;
 		});
 
 		for (let i = 0; i < BENCH_TIMES; ++i) {

@@ -16,9 +16,9 @@ describe('event', () => {
 		const event = createEvent<{ ok: string }>();
 		event({ ok: 'google' });
 
-		$.on(event, (_, event) => {
+		$.on(event, (_, payload) => {
 			expect(event).toBeDefined();
-			expect(event.payload).toStrictEqual({ ok: 'google' });
+			expect(payload).toStrictEqual({ ok: 'google' });
 		});
 	});
 

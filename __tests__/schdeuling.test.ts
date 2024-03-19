@@ -12,9 +12,9 @@ describe('scheduling', () => {
 		const $ = createStore<{ session?: Session }>({ session: undefined });
 		const session_defined = createEvent<Session>();
 
-		$.on(session_defined, (store, event) => {
+		$.on(session_defined, (store, payload) => {
 			const start = store.session?.id;
-			store.session = event.payload;
+			store.session = payload;
 			const end = store.session?.id;
 
 			expect(start).not.toEqual(end);
@@ -32,13 +32,13 @@ describe('scheduling', () => {
 		const session_defined = createEvent<Session>();
 		const try_certificate = createEvent();
 
-		$.on(session_defined, (store, event) => {
-			store.session = event.payload;
-			store.session = { ...event.payload, check: true };
+		$.on(session_defined, (store, payload) => {
+			store.session = payload;
+			store.session = { ...payload, check: true };
 
 			try_certificate();
 
-			if (store.session.isVerified) {
+			if (store.session?.isVerified) {
 				store.session.id = 1;
 			}
 		});
@@ -69,13 +69,13 @@ describe('scheduling', () => {
 		const breaker = createEvent();
 		const aside = createEvent();
 
-		$.on(session_defined, (store, event) => {
-			store.session = event.payload; // set twice
-			store.session = { ...event.payload, check: true };
+		$.on(session_defined, (store, payload) => {
+			store.session = payload; // set twice
+			store.session = { ...payload, check: true };
 
 			try_certificate();
 
-			if (store.session.isVerified) {
+			if (store.session?.isVerified) {
 				store.session.id = 1;
 			}
 		});
