@@ -37,7 +37,7 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 		get: () => immutable_proxy,
 		/**
 		 * @description $.on(event, handler) - allow to handle emitted events.
-		 * Handler has an access to the store and event details.
+		 * Handler has an access to the writable store and event payload.
 		 * */
 		on: <E extends EventEmitter<any>>(
 			event_emitter: E,
@@ -90,4 +90,4 @@ export type EventPayload = Record<string, any> | string | number | boolean | Big
 
 export type ExtractEventPayload<Emitter> = Emitter extends EventEmitter<infer P> ? P : never;
 
-type BrowserEvent = `window::${keyof WindowEventMap}` | `document::${keyof DocumentEventMap}`;
+type BrowserEvent = `window:${keyof WindowEventMap}` | `document:${keyof DocumentEventMap}`;
