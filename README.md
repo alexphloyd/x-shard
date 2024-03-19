@@ -27,7 +27,7 @@ $auth.on(uncertified_coins_defined, (store, payload) => {
     }
 });
 
-$auth.on('window:offline' , () => { // do something )
+$auth.on('window:offline' , () => { /* do something */ })
 
 // subsequence events batches in one process so .watch will be triggered once
 $auth.watch((snapshot) => {
