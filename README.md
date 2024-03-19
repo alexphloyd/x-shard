@@ -1,7 +1,14 @@
 # x-shard
 
-Event-driven tool to describe behavior rely on either domain or browser events
+Event-driven tool to describe behavior rely on either domain or browser events.
+```plaintext
+yarn add x-shard
+```
+x-shard is framework-agnostic tool operates within web environment following its standarts. <br />
+web-framework bindings will be published soon.
 
+
+#### Showcase
 ```ts
 const $auth = createStore<{ session?: Session; logger?: Logger }>();
 const $side = createStore({ wallet: 'data' });
