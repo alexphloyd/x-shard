@@ -1,6 +1,6 @@
 import { type ProxyTarget } from './core';
 import { mutated_proxies_map } from './maps';
-import { is_object } from './parsers';
+import { is_object } from './guards';
 
 export function create_deep_writable_proxy<T extends ProxyTarget>(proxy_target: T, deep?: unknown): T {
 	const current_target = deep != null ? deep : proxy_target;
