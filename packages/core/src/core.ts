@@ -1,6 +1,6 @@
 import { create_deep_immutable_proxy, create_deep_writable_proxy } from './proxy';
 import { browser_event_target_map, mutated_proxies_map } from './maps';
-import { unsafe_parse_object, is_string, is_synthetic_emitter, parse_browser_emitter } from './parsers';
+import { unsafe_parse_object, is_string, is_synthetic_emitter, parse_browser_emitter } from './guards';
 
 const system = new EventTarget();
 
@@ -43,13 +43,13 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 			event_emitter: E,
 			handler: (store: typeof $, payload: ExtractEventPayload<E>) => void
 		) => {
-			function _handler(kernel_event: Event) {
+			function _handler(payload: any) {
 				let is_child_process = is_handling_process;
 				if (!is_child_process) {
 					is_handling_process = true;
 				}
 
-				handler($, (kernel_event as CustomEvent).detail);
+				handler($, payload);
 
 				if (!is_child_process) {
 					if (mutated_proxies_map.get(proxy_target)) {
@@ -63,7 +63,7 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 			if (is_synthetic_emitter(event_emitter)) {
 				const key = synthetic_event_keys_storage.get(event_emitter);
 				if (key) {
-					system.addEventListener(key, _handler);
+					system.addEventListener(key, (ev) => _handler((ev as CustomEvent).detail));
 				}
 			} else if (is_string(event_emitter)) {
 				const { target, event } = parse_browser_emitter(event_emitter);
