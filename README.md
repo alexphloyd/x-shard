@@ -6,7 +6,7 @@ Event-driven tool to describe behavior rely on either domain or browser events.
 ```plaintext
 yarn add x-shard
 ```
-x-shard is framework-agnostic tool operates within web environment following its standarts. <br />
+x-shard is framework-agnostic tool operates within web environment following its Standards. <br />
 web-framework bindings will be published soon.
 
 
