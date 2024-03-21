@@ -39,11 +39,6 @@ $auth.on(uncertified_coins_defined, (store, payload) => {
 
 // subsequence events batches in one process so .track will be triggered once
 $auth.track((snapshot) => {
-   /**
-    * Intended for tracking and emitting events on desired changes.
-    * Included into subsequent event handling process.
-    * */
-
     const { logger, session } = snapshot;
 
     if (session?.is_verified) {
