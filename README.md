@@ -18,6 +18,8 @@ const $side = createStore({ wallet: 'data' });
 const session_defined = createEvent<Session>();
 const uncertified_coins_defined = createEvent<Session['id']>();
 
+$auth.on('window:offline' , () => { /* do something */ })
+
 $auth.on(session_defined, (store, payload) => {
     store.session = wrap(payload, $side.get().wallet);
     store.logger = new Logger();
@@ -36,16 +38,27 @@ $auth.on(uncertified_coins_defined, (store, payload) => {
     }
 });
 
-$auth.on('window:offline' , () => { /* do something */ })
+// subsequence events batches in one process so .track will be triggered once
+$auth.track((snapshot) => {
+   /**
+    * Intended for tracking and emitting events on desired changes.
+    * Included into subsequent event handling process.
+    * */
 
-// subsequence events batches in one process so .watch will be triggered once
-$auth.watch((snapshot) => {
     const { logger, session } = snapshot;
 
     if (session?.is_verified) {
         logger?.stdout('session has been certificated');
+        side_event();
     }
 });
+
+$auth.subscribe((snapshot) => {
+    /**
+    * runs a handler after the entire chain of event handlers is completed 
+    * and the store has changed.
+    * */
+})
 
 const session = get_session();
 session_defined(session);
