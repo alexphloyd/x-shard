@@ -31,11 +31,9 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 	let is_handling_process = false;
 
 	let trackers: Array<Listener<S>> = [];
-	let listeners: Array<Listener<S>> = [];
-
-	function exec(target: Array<Listener<S>>) {
-		for (let i = 0; i < target.length; ++i) {
-			target[i](immutable_proxy);
+	function exec_trackers() {
+		for (let i = 0; i < trackers.length; ++i) {
+			trackers[i](immutable_proxy);
 		}
 	}
 
@@ -45,8 +43,8 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 		 * */
 		get: () => immutable_proxy,
 		/**
-		 * @description $.on(event, handler) - allow to handle emitted events.
-		 * Handler has an access to the writable store and event payload.
+		 * @description $.on(event, handler) - intended to handle emitted events.
+		 * Could be used to emit subsequent events.
 		 * */
 		on: <E extends SyntheticEventEmitter<any> | BrowserEventEmitter>(
 			event_emitter: E,
@@ -61,13 +59,13 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 				handler($, payload);
 
 				if (!is_child_process) {
-					if (mutated_proxies_map.get(proxy_target)) {
-						exec(trackers);
-						mutated_proxies_map.set(proxy_target, false);
-					}
 					is_handling_process = false;
+					const has_been_mutated = mutated_proxies_map.get(proxy_target);
 
-					exec(listeners);
+					if (has_been_mutated) {
+						mutated_proxies_map.set(proxy_target, false);
+						exec_trackers();
+					}
 				}
 			}
 
@@ -82,27 +80,13 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 			}
 		},
 		/**
-		 * @description $.track(handler) - intended for tracking and emitting events on desired changes.
-		 * Included into subsequent event handling process.
-		 *
-		 * Handler has an access to immutable snapshot.
+		 * @description $.subscribe(handler) - runs the handler after
+		 * an entire chain of event handlers is completed and the store has changed.
 		 * */
 		track: (handler: (snapshot: typeof immutable_proxy) => void) => {
 			trackers.push(handler);
 			return () => {
 				trackers = trackers.filter((t) => t !== handler);
-			};
-		},
-		/**
-		 * @description $.subscribe(handler) - runs a handler after
-		 * the entire chain of event handlers is completed and the store has changed.
-		 *
-		 * Handler has an access to immutable snapshot.
-		 * */
-		subscribe: (handler: (snapshot: typeof immutable_proxy) => void) => {
-			listeners.push(handler);
-			return () => {
-				listeners = listeners.filter((l) => l !== handler);
 			};
 		},
 	};
