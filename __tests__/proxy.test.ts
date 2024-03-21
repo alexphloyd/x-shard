@@ -54,14 +54,14 @@ describe('proxy', () => {
 			store.prop = '12';
 		});
 
-		const watch_handler = vi.fn((snapshot: ReturnType<(typeof $)['get']>) => {
+		const tracker = vi.fn((snapshot: ReturnType<(typeof $)['get']>) => {
 			expect(snapshot.prop).toEqual('12');
 		});
-		$.watch(watch_handler);
+		$.track(tracker);
 
 		event();
 
-		expect(watch_handler).toHaveBeenCalledOnce();
+		expect(tracker).toHaveBeenCalledOnce();
 	});
 
 	test('deep mutable', () => {
@@ -82,16 +82,16 @@ describe('proxy', () => {
 			(store as any).custom = { a: '12' };
 		});
 
-		const watch_handler = vi.fn((snapshot: ReturnType<(typeof $)['get']>) => {
+		const tracker = vi.fn((snapshot: ReturnType<(typeof $)['get']>) => {
 			expect((snapshot as any).custom.a).toEqual('12');
 
 			expect(snapshot.object.deep).toEqual('none');
 			expect(snapshot.object.d.a).toEqual('c');
 		});
-		$.watch(watch_handler);
+		$.track(tracker);
 
 		event();
 
-		expect(watch_handler).toHaveBeenCalledOnce();
+		expect(tracker).toHaveBeenCalledOnce();
 	});
 });

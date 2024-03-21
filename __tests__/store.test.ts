@@ -83,7 +83,7 @@ describe('store', () => {
 			store.name = '12';
 		});
 
-		$.watch((snapshot) => {
+		$.track((snapshot) => {
 			expect(snapshot).toEqual(initial);
 			expect(() => ((snapshot as any).map = new Map())).toThrowError();
 		});

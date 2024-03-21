@@ -30,6 +30,15 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 
 	let is_handling_process = false;
 
+	let trackers: Array<Listener<S>> = [];
+	let listeners: Array<Listener<S>> = [];
+
+	function exec(target: Array<Listener<S>>) {
+		for (let i = 0; i < target.length; ++i) {
+			target[i](immutable_proxy);
+		}
+	}
+
 	return {
 		/**
 		 * @description $.get() return an immutable store snapshot
@@ -53,10 +62,12 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 
 				if (!is_child_process) {
 					if (mutated_proxies_map.get(proxy_target)) {
-						system.dispatchEvent(new CustomEvent(store_mutated_event_key));
+						exec(trackers);
 						mutated_proxies_map.set(proxy_target, false);
 					}
 					is_handling_process = false;
+
+					exec(listeners);
 				}
 			}
 
@@ -71,14 +82,28 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 			}
 		},
 		/**
-		 * @description $.watch(handler) - runs an effect after the store has changed.
+		 * @description $.track(handler) - intended for tracking and emitting events on desired changes.
+		 * Included into subsequent event handling process.
+		 *
 		 * Handler has an access to immutable snapshot.
 		 * */
-		watch: (handler: (snapshot: typeof immutable_proxy) => void) => {
-			const _handler = () => {
-				handler(immutable_proxy);
+		track: (handler: (snapshot: typeof immutable_proxy) => void) => {
+			trackers.push(handler);
+			return () => {
+				trackers = trackers.filter((t) => t !== handler);
 			};
-			system.addEventListener(store_mutated_event_key, _handler);
+		},
+		/**
+		 * @description $.subscribe(handler) - runs a handler after
+		 * the entire chain of event handlers is completed and the store has changed.
+		 *
+		 * Handler has an access to immutable snapshot.
+		 * */
+		subscribe: (handler: (snapshot: typeof immutable_proxy) => void) => {
+			listeners.push(handler);
+			return () => {
+				listeners = listeners.filter((l) => l !== handler);
+			};
 		},
 	};
 }
@@ -116,3 +141,5 @@ export type BrowserEventTargetMap<E extends PossibleBrowserEvents> = {
 
 export type BrowserEventTarget = 'window' | 'document';
 export type PossibleBrowserEvents = keyof DocumentEventMap & keyof WindowEventMap;
+
+export type Listener<S extends ProxyTarget> = (snapshot: Readonly<S>) => void;

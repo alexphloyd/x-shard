@@ -27,7 +27,7 @@ describe('scheduling', () => {
 	test('should emit about mutations once with nested events', async () => {
 		const $ = createStore<{ session?: Session }>({ session: undefined });
 		const handler = vi.fn(() => {});
-		$.watch(handler);
+		$.track(handler);
 
 		const session_defined = createEvent<Session>();
 		const try_certificate = createEvent();
@@ -62,7 +62,7 @@ describe('scheduling', () => {
 	test('should not overlap each other', async () => {
 		const $ = createStore<{ session?: Session }>({ session: undefined });
 		const handler = vi.fn(() => {});
-		$.watch(handler);
+		$.track(handler);
 
 		const session_defined = createEvent<Session>();
 		const try_certificate = createEvent();
@@ -104,7 +104,7 @@ describe('scheduling', () => {
 			}
 		});
 
-		$.watch((snapshot) => {
+		$.track((snapshot) => {
 			if (snapshot.session?.check) {
 				breaker();
 			}

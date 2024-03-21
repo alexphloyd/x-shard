@@ -28,6 +28,10 @@ describe('bench', () => {
 		$4.on(event, (store, payload) => {
 			store.a.b.c = payload;
 		});
+		$.track(() => {});
+		$2.track(() => {});
+		$3.track(() => {});
+		$4.track(() => {});
 
 		for (let i = 0; i < BENCH_TIMES; ++i) {
 			event('test');
@@ -56,6 +60,10 @@ describe('bench', () => {
 		$4.on(event, (store, payload) => {
 			return { a: { b: { ...store.a.b, c: payload } } };
 		});
+		$.watch(() => {});
+		$2.watch(() => {});
+		$3.watch(() => {});
+		$4.watch(() => {});
 		for (let i = 0; i < BENCH_TIMES; ++i) {
 			event('test');
 		}

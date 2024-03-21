@@ -24,15 +24,15 @@ describe('event', () => {
 
 	test('not related events should not trigger the STORE_CHANGED event', () => {
 		const $ = createStore();
-		vi.spyOn($, 'watch');
+		vi.spyOn($, 'track');
 
 		const event = createEvent();
 		event();
 
 		const mocked_handler = vi.fn(() => {});
-		$.watch(mocked_handler);
+		$.track(mocked_handler);
 
 		expect(mocked_handler).toHaveBeenCalledTimes(0);
-		expect($.watch).toHaveBeenCalledTimes(1);
+		expect($.track).toHaveBeenCalledTimes(1);
 	});
 });
