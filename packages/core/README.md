@@ -9,7 +9,6 @@ yarn add x-shard
 x-shard is framework-agnostic tool operates within web environment following its Standards. <br />
 web-framework bindings will be published soon.
 
-
 #### Showcase
 ```ts
 const $auth = createStore<{ session?: Session; logger?: Logger }>();
@@ -49,22 +48,13 @@ $auth.track((snapshot) => {
 
     if (session?.is_verified) {
         logger?.stdout('session has been certificated');
-        side_event();
     }
 });
-
-$auth.subscribe((snapshot) => {
-    /**
-    * runs a handler after the entire chain of event handlers is completed 
-    * and the store has changed.
-    * */
-})
 
 const session = get_session();
 session_defined(session);
 
 ```
-
 
 
 
