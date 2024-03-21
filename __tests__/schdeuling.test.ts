@@ -1,5 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
 import { createStore, createEvent } from '../packages/core/src/core';
+import { s } from 'vitest/dist/reporters-P7C2ytIv';
 
 describe('scheduling', () => {
 	test('run mutations immediately', () => {
