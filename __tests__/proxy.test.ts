@@ -4,7 +4,7 @@ import { createStore, createEvent } from '../packages/core/src/core';
 
 describe('proxy', () => {
 	class Helper {}
-	test('immutable', () => {
+	test('immutable cannot be mutated', () => {
 		const origin = {
 			string: 'text',
 			number: 18,
@@ -44,29 +44,10 @@ describe('proxy', () => {
 		expect((proxy as any).added.a).toEqual('15');
 	});
 
-	test('flat mutable proxy', () => {
-		const event = createEvent();
-		const $ = createStore({
-			prop: '12',
-		});
-
-		$.on(event, (store) => {
-			store.prop = '12';
-		});
-
-		const tracker = vi.fn((snapshot: ReturnType<(typeof $)['get']>) => {
-			expect(snapshot.prop).toEqual('12');
-		});
-		$.track(tracker);
-
-		event();
-
-		expect(tracker).toHaveBeenCalledOnce();
-	});
-
 	test('deep mutable', () => {
-		const event = createEvent();
+		const do_mutation = createEvent();
 		const $ = createStore({
+			flat: '0',
 			object: {
 				deep: 'test',
 				d: {
@@ -75,22 +56,22 @@ describe('proxy', () => {
 			},
 		});
 
-		$.on(event, (store) => {
+		$.on(do_mutation, (store) => {
 			store.object.deep = 'none';
 			store.object.d.a = 'c';
-
+			store.flat = '17';
 			(store as any).custom = { a: '12' };
 		});
 
 		const tracker = vi.fn((snapshot: ReturnType<(typeof $)['get']>) => {
 			expect((snapshot as any).custom.a).toEqual('12');
-
+			expect(snapshot.flat).toEqual('17');
 			expect(snapshot.object.deep).toEqual('none');
 			expect(snapshot.object.d.a).toEqual('c');
 		});
 		$.track(tracker);
 
-		event();
+		do_mutation();
 
 		expect(tracker).toHaveBeenCalledOnce();
 	});

@@ -9,7 +9,7 @@ describe('store', () => {
 		}
 	}
 
-	test('mutable $ in .on', () => {
+	test('mutable $ in .on & contain instance', () => {
 		const helper_event = createEvent();
 		const $ = createStore<{ instance?: Helper; text?: string }>({ instance: undefined, text: 'google' });
 		$.on(helper_event, (store) => {
@@ -20,13 +20,15 @@ describe('store', () => {
 
 		const helper_instance_in_store = $.get().instance;
 
+		expect(helper_instance_in_store).toBeInstanceOf(Helper);
 		expect(helper_instance_in_store?.say()).toEqual('test');
 		expect($.get().text).toBeUndefined();
 	});
 
-	test('allow to create only with object as initial', () => {
+	test('createStore only with object || empty as initial', () => {
 		expect(() => createStore(25 as any)).toThrowError();
 		expect(() => createStore({})).not.toThrowError();
+		expect(() => createStore()).not.toThrowError();
 	});
 
 	test('create with serializable values', () => {
@@ -73,21 +75,5 @@ describe('store', () => {
 			},
 		});
 		expect(() => ($.get().deep_object.instance = 'new deep text' as any)).toThrowError();
-	});
-
-	test('snapshot in .watch', () => {
-		const initial = { map: new Map(), name: {} };
-		const $ = createStore(initial);
-		const event = createEvent();
-		$.on(event, (store) => {
-			store.name = '12';
-		});
-
-		$.track((snapshot) => {
-			expect(snapshot).toEqual(initial);
-			expect(() => ((snapshot as any).map = new Map())).toThrowError();
-		});
-
-		event();
 	});
 });

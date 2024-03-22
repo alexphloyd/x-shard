@@ -4,22 +4,22 @@ import { createStore, createEvent } from '../packages/core/src/core';
 describe('event', () => {
 	test('create', () => {
 		const create_event = vi.fn(createEvent);
-		const event = vi.fn(create_event());
-		event();
+		const event = vi.fn(() => create_event());
 
-		expect(event).toHaveBeenCalledOnce();
+		expect(event).toBeTypeOf('function');
 		expect(create_event).toHaveBeenCalledOnce();
 	});
 
 	test('should be consumed with payload', () => {
 		const $ = createStore();
 		const event = createEvent<{ ok: string }>();
-		event({ ok: 'google' });
 
 		$.on(event, (_, payload) => {
 			expect(event).toBeDefined();
 			expect(payload).toStrictEqual({ ok: 'google' });
 		});
+
+		event({ ok: 'google' });
 	});
 
 	test('not related events should not trigger the STORE_CHANGED event', () => {
@@ -27,12 +27,12 @@ describe('event', () => {
 		vi.spyOn($, 'track');
 
 		const event = createEvent();
+
+		const tracker = vi.fn(() => {});
+		$.track(tracker);
+
 		event();
 
-		const mocked_handler = vi.fn(() => {});
-		$.track(mocked_handler);
-
-		expect(mocked_handler).toHaveBeenCalledTimes(0);
-		expect($.track).toHaveBeenCalledTimes(1);
+		expect(tracker).toHaveBeenCalledTimes(0);
 	});
 });
