@@ -4,7 +4,7 @@ import { createStore, createEvent } from '../packages/core/src/core';
 describe('event', () => {
 	test('create', () => {
 		const create_event = vi.fn(createEvent);
-		const event = vi.fn(() => create_event());
+		const event = create_event();
 
 		expect(event).toBeTypeOf('function');
 		expect(create_event).toHaveBeenCalledOnce();
