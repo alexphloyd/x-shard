@@ -11,12 +11,14 @@ export function create_deep_writable_proxy<T extends ProxyTarget>(proxy_target: 
 				: target[prop as keyof typeof target];
 		},
 		set(target: any, prop: any, passed_value: unknown) {
-			const value = is_object(passed_value)
-				? create_deep_writable_proxy(proxy_target, passed_value)
-				: passed_value;
+			if (target[prop] !== passed_value) {
+				const value = is_object(passed_value)
+					? create_deep_writable_proxy(proxy_target, passed_value)
+					: passed_value;
 
-			target[prop] = value;
-			mutated_proxies_map.set(proxy_target, true);
+				target[prop] = value;
+				mutated_proxies_map.set(proxy_target, true);
+			}
 
 			return true;
 		},
