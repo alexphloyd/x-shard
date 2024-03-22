@@ -9,4 +9,5 @@ export default defineConfig({
 	minify: 'terser',
 	dts: true,
 	clean: true,
+	platform: 'browser',
 });
