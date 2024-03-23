@@ -1,16 +1,14 @@
 {
 	"name": "x-shard",
 	"author": "arch1i",
-	"version": "0.0.16",
+	"version": "0.0.17",
 	"description": "Event-driven tool to describe behavior rely on either domain or browser events.",
 	"license": "MIT",
-	"main": "./dist/core.cjs",
+	"main": "./dist/core.js",
 	"module": "./dist/core.js",
 	"types": "./dist/core.d.ts",
 	"files": [
-		"./dist/core.cjs",
-		"./dist/core.d.cts",
-		"./dist/core.js",
+		"./dist/core.min.js",
 		"./dist/core.d.ts",
 		"./README.md",
 		"./LICENSE"
