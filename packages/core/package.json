@@ -8,7 +8,8 @@
 	"module": "./dist/core.js",
 	"types": "./dist/core.d.ts",
 	"files": [
-		"./dist/core.min.js",
+		"./dist/core.js",
+		"./dist/core.cjs",
 		"./dist/core.d.ts",
 		"./README.md",
 		"./LICENSE"
