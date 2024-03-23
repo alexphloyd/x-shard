@@ -8,6 +8,7 @@
 		"outDir": "dist",
 
 		"module": "ESNext",
+		"moduleResolution": "Bundler",
 		"declaration": true,
 		"isolatedModules": true,
 		"esModuleInterop": true,
@@ -21,9 +22,9 @@
 		"noFallthroughCasesInSwitch": true,
 
 		"paths": {
-			"~/*": ["packages/core/src/*"]
+			"~/*": ["packages/*"]
 		}
 	},
-	"include": ["packages/core/src/*"],
+	"include": ["packages/react/*", "packages/core/*"],
 	"exclude": ["node_modules", "dist"]
 }
