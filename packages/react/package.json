@@ -4,24 +4,23 @@
 	"version": "0.0.1",
 	"description": "React bindings for x-shard.",
 	"license": "MIT",
-	"main": "./dist/core.cjs",
-	"module": "./dist/core.js",
-	"types": "./dist/core.d.ts",
+	"main": "./dist/x-shard-react.cjs",
+	"module": "./dist/x-shard-react.js",
+	"types": "./dist/x-shard-react.d.ts",
 	"files": [
-		"./dist/core.cjs",
-		"./dist/core.d.cts",
-		"./dist/core.js",
-		"./dist/core.d.ts",
+		"./dist/x-shard-react.cjs",
+		"./dist/x-shard-react.js",
+		"./dist/x-shard-react.d.ts",
 		"./README.md",
 		"./LICENSE"
 	],
 	"dependencies": {},
 	"devDependencies": {
-		"x-shard": "^0.0.16"
+		"x-shard": "^0.0.17"
 	},
 	"peerDependencies": {
 		"react": ">=16.8.0 <19.0.0",
-		"x-shard": "^0.0.16"
+		"x-shard": "^0.0.17"
 	},
 	"keywords": [
 		"state",

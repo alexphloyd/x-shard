@@ -13,7 +13,7 @@ const core_config = [
 		input: `packages/core/src/core.ts`,
 		plugins: [
 			cleaner({ targets: ['packages/core/dist'] }),
-			typescript({ include: ['packages/core/src/*'], declaration: false }),
+			typescript({ include: ['packages/core/src/*'], declaration: false, module: 'ESNext' }),
 			babel({
 				babelHelpers: 'bundled',
 			}),
@@ -22,11 +22,11 @@ const core_config = [
 		],
 		output: [
 			{
-				file: `packages/core/dist/core.js`,
+				file: `packages/core/dist/x-shard.js`,
 				format: 'es',
 			},
 			{
-				file: `packages/core/dist/core.cjs`,
+				file: `packages/core/dist/x-shard.cjs`,
 				format: 'cjs',
 			},
 		],
@@ -36,11 +36,53 @@ const core_config = [
 		plugins: [dts(), size()],
 		output: [
 			{
-				file: `packages/core/dist/core.d.ts`,
+				file: `packages/core/dist/x-shard.d.ts`,
 				format: 'es',
 			},
 		],
 	},
 ];
 
-export default [...core_config];
+/**
+ * @type {import('rollup').RollupOptions}
+ */
+const react_config = [
+	{
+		input: `packages/react/src/core.ts`,
+		plugins: [
+			cleaner({ targets: ['packages/react/dist'] }),
+			typescript({ include: ['packages/react/src/*'], declaration: false, module: 'ESNext' }),
+			babel({
+				babelHelpers: 'bundled',
+			}),
+			terser(),
+			size(),
+		],
+		output: [
+			{
+				file: `packages/react/dist/x-shard-react.js`,
+				format: 'es',
+				exports: 'named',
+			},
+			{
+				file: `packages/react/dist/x-shard-react.cjs`,
+				format: 'cjs',
+				exports: 'named',
+			},
+		],
+		external: ['react', 'react-dom', 'x-shard'],
+	},
+	{
+		input: `packages/react/src/core.ts`,
+		plugins: [dts(), size()],
+		output: [
+			{
+				file: `packages/react/dist/x-shard-react.d.ts`,
+				format: 'es',
+			},
+		],
+		external: ['react', 'react-dom', 'x-shard'],
+	},
+];
+
+export default [...core_config, ...react_config];

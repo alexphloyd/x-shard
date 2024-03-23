@@ -2,13 +2,12 @@
 	"compilerOptions": {
 		"target": "ES2019",
 		"lib": ["ESNext", "DOM", "DOM.Iterable"],
-		"skipLibCheck": true,
 
 		"baseUrl": "./",
 		"outDir": "dist",
 
-		"module": "ESNext",
-		"declaration": true,
+		"module": "CommonJS",
+		"declaration": false,
 		"isolatedModules": true,
 		"esModuleInterop": true,
 		"strictBindCallApply": true,
