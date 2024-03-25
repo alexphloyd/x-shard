@@ -13,6 +13,7 @@
 		"strictBindCallApply": true,
 		"strictPropertyInitialization": true,
 		"strictFunctionTypes": true,
+		"jsx": "react-jsx",
 
 		/* Linting */
 		"strict": true,
@@ -23,6 +24,6 @@
 			"~/*": ["packages/*"]
 		}
 	},
-	"include": ["packages/core/src/*", "packages/react/src/*"],
+	"include": ["packages/core/src/*", "packages/react/src/*", "**/*.tsx", "__tests__/*"],
 	"exclude": ["node_modules", "dist"]
 }

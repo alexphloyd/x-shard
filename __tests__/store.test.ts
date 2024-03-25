@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { createStore, createEvent } from '../packages/core/src/core';
+import { createStore, createEvent } from '~/core/src/core';
 
 describe('store', () => {
 	class Helper {

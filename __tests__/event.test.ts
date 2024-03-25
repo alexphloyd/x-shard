@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
-import { createStore, createEvent } from '../packages/core/src/core';
+import { createStore, createEvent } from '~/core/src/core';
 
 describe('event', () => {
 	test('create', () => {

@@ -1,7 +1,7 @@
 import { describe, test } from 'vitest';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { createEvent as create_effector_event, createStore as create_effector_store } from 'effector';
-import { createStore, createEvent } from '../packages/core/dist/x-shard.js';
+import { createStore, createEvent } from '~/core/dist/x-shard.js';
 
 describe('bench', () => {
 	const BENCH_TIMES = 50_000;

@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
-import { create_deep_immutable_proxy } from '../packages/core/src/proxy';
-import { createStore, createEvent } from '../packages/core/src/core';
+import { create_deep_immutable_proxy } from '~/core/src/proxy';
+import { createStore, createEvent } from '~/core/src/core';
 
 describe('proxy', () => {
 	class Helper {}

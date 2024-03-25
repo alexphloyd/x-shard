@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
-import { createEvent, createStore } from '../packages/core/src/core';
+import { createEvent, createStore } from '~/core/src/core';
 
 describe('.track', () => {
 	test('contain snapshot', () => {
