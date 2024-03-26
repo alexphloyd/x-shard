@@ -1,7 +1,7 @@
 import { useEffect, useReducer } from 'react';
-import { createStore } from 'x-shard';
+import { type createStore } from 'x-shard';
 
-export function useStore<T extends ReturnType<typeof createStore>>(store: T) {
+export function useStore<T extends Record<keyof ReturnType<typeof createStore>, any>>(store: T) {
 	const [, force] = useReducer((x) => !x, true);
 	useEffect(() => {
 		const untrack = store.track(() => force());
