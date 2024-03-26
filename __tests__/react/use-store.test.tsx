@@ -21,7 +21,10 @@ describe('react bind', () => {
 	$main.on(incremented, (store) => {
 		store.counter += 1;
 	});
-	$main.on(no_side_effect, () => {});
+	$main.on(no_side_effect, (store) => {
+		const prev = store.counter;
+		store.counter = prev;
+	});
 	$main.on(reset, (store) => {
 		store.counter = initial_value;
 	});
