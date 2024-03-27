@@ -10,12 +10,13 @@ const store_mutated_event_keys_storage = new WeakMap<ProxyTarget, string>();
 
 export function createEvent<T extends SyntheticEventPayload | void = void>() {
 	const key = crypto.randomUUID();
-	const emitter = (payload: T) => {
-		system.dispatchEvent(new CustomEvent(key, { detail: payload }));
-	};
 
-	synthetic_event_keys_storage.set(emitter, key);
-	return emitter;
+	function emitter(payload: T) {
+		system.dispatchEvent(new CustomEvent(key, { detail: payload }));
+	}
+	synthetic_event_keys_storage.set(emitter as SyntheticEventEmitter<T>, key);
+
+	return emitter as SyntheticEventEmitter<T>;
 }
 
 export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
@@ -37,7 +38,7 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 		}
 	}
 
-	return {
+	const store_interface = {
 		/**
 		 * @description $.get() return an immutable store snapshot
 		 * */
@@ -46,7 +47,7 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 		 * @description $.on(event, handler) - intended to handle emitted events.
 		 * Could be used to emit subsequent events.
 		 * */
-		on: <E extends SyntheticEventEmitter<any> | BrowserEventEmitter>(
+		on: <E extends SyntheticEventEmitter<any> | NativeEventEmitter>(
 			event_emitter: E,
 			handler: (store: typeof $, payload: ExtractEventPayload<E>) => void
 		) => {
@@ -90,40 +91,60 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 			};
 		},
 	};
+
+	return store_interface as Brand<typeof store_interface, 'store'>;
 }
 
+/*
+ * Store definition
+ * */
 export interface ProxyTarget {
 	[key: string]: any;
 }
+export type Store = ReturnType<typeof createStore>;
 
-export type SyntheticEventEmitter<P extends SyntheticEventPayload | void = void> = ReturnType<
-	typeof createEvent<P>
+/*
+ * Synthetic Event definition
+ * */
+export type SyntheticEventEmitter<P extends SyntheticEventPayload | void = void> = Brand<
+	(payload: P) => void,
+	'synthetic_event_emitter'
 >;
 export type SyntheticEventPayload = Record<string, any> | string | number | boolean | BigInt | null;
 
-export type BrowserEventEmitter = `window:${keyof WindowEventMap}` | `document:${keyof DocumentEventMap}`;
+/*
+ * Native Browser Event definition
+ * */
 
+export type NativeEventEmitter = `window:${keyof WindowEventMap}` | `document:${keyof DocumentEventMap}`;
+
+export type NativeEventTargetMap<E extends NativeEventsMap> = {
+	window: WindowEventMap[E];
+	document: DocumentEventMap[E];
+};
+
+export type NativeEventTarget = 'window' | 'document';
+export type NativeEventsMap = keyof DocumentEventMap & keyof WindowEventMap;
+
+/*
+ * Event payloads
+ * */
 export type ExtractEventPayload<E> = E extends SyntheticEventEmitter<any>
 	? ExtractSyntheticEventPayload<E>
-	: E extends BrowserEventEmitter
+	: E extends NativeEventEmitter
 	? ExtractBrowserEventPayload<E>
 	: never;
 
 export type ExtractSyntheticEventPayload<E> = E extends SyntheticEventEmitter<infer P> ? P : never;
 
-export type ExtractBrowserEventPayload<E> = E extends BrowserEventEmitter ? DefineBrowserEventPayload<E> : never;
+export type ExtractBrowserEventPayload<E> = E extends NativeEventEmitter ? DefineBrowserEventPayload<E> : never;
 
-export type DefineBrowserEventPayload<Emitter extends BrowserEventEmitter> =
-	Emitter extends `${infer T extends BrowserEventTarget}:${infer E extends PossibleBrowserEvents}`
-		? BrowserEventTargetMap<E>[T]
+export type DefineBrowserEventPayload<Emitter extends NativeEventEmitter> =
+	Emitter extends `${infer T extends NativeEventTarget}:${infer E extends NativeEventsMap}`
+		? NativeEventTargetMap<E>[T]
 		: never;
 
-export type BrowserEventTargetMap<E extends PossibleBrowserEvents> = {
-	window: WindowEventMap[E];
-	document: DocumentEventMap[E];
-};
-
-export type BrowserEventTarget = 'window' | 'document';
-export type PossibleBrowserEvents = keyof DocumentEventMap & keyof WindowEventMap;
-
+/*
+ * Listener definition
+ * */
 export type Listener<S extends ProxyTarget> = (snapshot: Readonly<S>) => void;

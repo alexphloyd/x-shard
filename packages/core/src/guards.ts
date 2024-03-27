@@ -1,4 +1,4 @@
-import { type BrowserEventTarget, type createEvent } from './core';
+import { type NativeEventTarget, type createEvent } from './core';
 
 export function is_object(value: unknown): value is object {
 	return value != null && value.constructor.name === 'Object';
@@ -18,7 +18,7 @@ export function unsafe_parse_object<T>(value: T): T {
 	return value;
 }
 
-export function is_valid_browser_event_target(value: unknown): value is BrowserEventTarget {
+export function is_valid_browser_event_target(value: unknown): value is NativeEventTarget {
 	return value === 'document' || value === 'window';
 }
 
