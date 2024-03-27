@@ -2,47 +2,56 @@
 
 <a href="https://www.npmjs.com/package/x-shard" target="_blank">npm</a>
 
-Event-driven tool to describe behavior rely on either domain or browser events.
+An event-driven tool that describes behavior relies on either domain or browser events. x-shard is a framework-agnostic tool that operates within the web environment, adhering to its standards. <br />
+
 ```plaintext
 yarn add x-shard
 ```
-x-shard is framework-agnostic tool operates within web environment following its Standards. <br />
-web-framework bindings will be published soon.
 
-#### Showcase
 ```ts
 const $auth = createStore<{ session?: Session; logger?: Logger }>();
-const $side = createStore({ wallet: 'data' });
 
 const session_defined = createEvent<Session>();
-const uncertified_coins_defined = createEvent<Session['id']>();
 
 $auth.on('window:offline' , () => { /* do something */ })
 
 $auth.on(session_defined, (store, payload) => {
-    store.session = wrap(payload, $side.get().wallet);
+    store.session = wrap(payload, $another_store.get().wallet);
     store.logger = new Logger();
 
-    uncertified_coins_defined(store.session?.id);
-});
-
-$auth.on(uncertified_coins_defined, (store, payload) => {
-    const session_with_certificated_coins = certificate(payload);
-
-    store.session = session_with_certificated_coins;
+    another_event(store.session?.id);
 });
 
 // subsequence events batches in one process so .track will be triggered once
 $auth.track((snapshot) => {
-    const { logger, session } = snapshot;
-
-    if (session?.is_verified) {
-        logger?.stdout('session has been certificated');
-    }
+    snapshot.logger?.stdout('session has been certificated');
 });
 
-const session = get_session();
-session_defined(session);
-
+session_defined(session); // emit domain event
 ```
+
+#### React Bind
+```plaintext
+yarn add x-shard-react
+```
+
+```ts
+const $main = createStore({ counter: 5 });
+const incremented = createEvent();
+
+$main.on(incremented, (store) => {
+    store.counter += 1;
+});
+$main.on('document:DOMContentLoaded', (store) => {
+    store.counter += 10;
+});
+
+function App() {
+    const $ = useStore($main);
+    return (
+        <button onClick={() => incremented()}>count</button>
+    )
+}
+```
+
 
