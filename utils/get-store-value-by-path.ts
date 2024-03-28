@@ -1,4 +1,5 @@
-import { type AnyStore, ExtractStoreProxyTarget } from '~/core/src/core';
+import { type AnyStore, type ExtractStoreProxyTarget } from '~/core/src/core';
+import { type DefineTypeByPath, type ResourcePath } from './shared-types';
 
 export function get_store_value_by_path<
 	S extends AnyStore,

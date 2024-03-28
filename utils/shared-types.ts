@@ -1,6 +1,6 @@
-declare type Brand<K, T> = K & { __brand: T };
+export type Brand<K, T> = K & { __brand: T };
 
-declare type ResourcePath<T, D extends any[] = []> = T extends Array<any>
+export type ResourcePath<T, D extends any[] = []> = T extends Array<any>
 	? never
 	: Values<{
 			[K in Exclude<keyof T, symbol>]: `${K}${_ResourcePath<T[K], D>}`;
@@ -12,7 +12,7 @@ type _ResourcePath<T, D extends any[]> = D['length'] extends 15
 	? '' | `.${ResourcePath<T, [...D, 0]>}`
 	: '';
 
-declare type DefineTypeByPath<T, P extends string, D extends any[] = []> = D['length'] extends 20
+export type DefineTypeByPath<T, P extends string, D extends any[] = []> = D['length'] extends 20
 	? never
 	: T extends object
 	? Split<P, '.'>[D['length']] extends keyof T
@@ -22,7 +22,7 @@ declare type DefineTypeByPath<T, P extends string, D extends any[] = []> = D['le
 		: never
 	: T;
 
-declare type Split<S extends string, D extends string> = string extends S
+export type Split<S extends string, D extends string> = string extends S
 	? string[]
 	: S extends ''
 	? []

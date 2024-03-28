@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
 
 import { createEvent, createStore } from '~/core/src/core';

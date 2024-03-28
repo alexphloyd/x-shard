@@ -14,7 +14,7 @@ const core_config = [
 		plugins: [
 			cleaner({ targets: ['packages/core/dist'] }),
 			typescript({
-				include: ['packages/core/src/*', 'utils/shared-types.d.ts'],
+				include: ['packages/core/src/*', 'utils/shared-types.ts'],
 				declaration: false,
 				module: 'ESNext',
 			}),
