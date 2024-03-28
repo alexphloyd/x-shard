@@ -13,7 +13,11 @@ const core_config = [
 		input: `packages/core/src/core.ts`,
 		plugins: [
 			cleaner({ targets: ['packages/core/dist'] }),
-			typescript({ include: ['packages/core/src/*'], declaration: false, module: 'ESNext' }),
+			typescript({
+				include: ['packages/core/src/*', 'utils/shared-types.d.ts'],
+				declaration: false,
+				module: 'ESNext',
+			}),
 			babel({
 				babelHelpers: 'bundled',
 			}),
@@ -51,7 +55,11 @@ const react_config = [
 		input: `packages/react/src/core.ts`,
 		plugins: [
 			cleaner({ targets: ['packages/react/dist'] }),
-			typescript({ include: ['packages/react/src/*'], declaration: false, module: 'ESNext' }),
+			typescript({
+				include: ['packages/react/src/*', 'utils/*'],
+				declaration: false,
+				module: 'ESNext',
+			}),
 			babel({
 				babelHelpers: 'bundled',
 			}),

@@ -24,6 +24,6 @@
 			"~/*": ["packages/*"]
 		}
 	},
-	"include": ["packages/core/src/*", "packages/react/src/*", "**/*.tsx", "__tests__/*", "**/*.ts"],
+	"include": ["packages/core/src/*", "packages/react/src", "__tests__/*", "utils/*", "**/*.tsx", "**/*.ts"],
 	"exclude": ["node_modules", "dist"]
 }
