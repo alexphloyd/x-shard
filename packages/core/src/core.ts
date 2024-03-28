@@ -102,7 +102,7 @@ export interface ProxyTarget {
 	[key: string]: any;
 }
 export type AnyStore<T extends ProxyTarget = any> = ReturnType<typeof createStore<T>>;
-export type ExtractStoreProxyTarget<S extends ProxyTarget> = typeof createStore extends (initial: S) => any
+export type ExtractStoreProxyTarget<S extends ProxyTarget> = typeof createStore extends (target: S) => any
 	? ReturnType<S['get']>
 	: never;
 

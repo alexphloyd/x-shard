@@ -12,7 +12,9 @@ type _ResourcePath<T, D extends any[]> = D['length'] extends 15
 	? '' | `.${ResourcePath<T, [...D, 0]>}`
 	: '';
 
-declare type DefineTypeByPath<T, P extends string, D extends any[] = []> = T extends object
+declare type DefineTypeByPath<T, P extends string, D extends any[] = []> = D['length'] extends 20
+	? never
+	: T extends object
 	? Split<P, '.'>[D['length']] extends keyof T
 		? DefineTypeByPath<T[Split<P, '.'>[D['length']]], P, [...D, 0]>
 		: Split<P, '.'>['length'] extends D['length']

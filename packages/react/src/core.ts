@@ -11,7 +11,7 @@ export function useStore<
 	S extends AnyStore,
 	T extends ExtractStoreProxyTarget<S>,
 	P extends ResourcePath<T> | void = void
->(store: S, path?: P): T | DefineTypeByPath<T, P & string> {
+>(store: S, path?: P): T | Readonly<DefineTypeByPath<T, P & string>> {
 	const [, force] = useReducer((x) => !x, true);
 
 	useEffect(() => {
