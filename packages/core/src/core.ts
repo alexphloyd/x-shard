@@ -101,7 +101,13 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 export interface ProxyTarget {
 	[key: string]: any;
 }
-export type AnyStore = ReturnType<typeof createStore<any>>;
+export type AnyStore<T extends ProxyTarget = any> = ReturnType<typeof createStore<T>>;
+export type ExtractStoreProxyTarget<S extends ProxyTarget> = typeof createStore extends (initial: S) => any
+	? ReturnType<S['get']>
+	: never;
+
+const a = createStore({ a: 12 });
+type a = ExtractStoreProxyTarget<typeof a>;
 
 /*
  * Synthetic Event definition

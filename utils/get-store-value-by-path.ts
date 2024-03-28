@@ -1,9 +1,10 @@
-import { type AnyStore } from '~/core/src/core';
+import { type AnyStore, ExtractStoreProxyTarget } from '~/core/src/core';
 
-export function get_store_value_by_path<S extends AnyStore, P extends ResourcePath<ReturnType<S['get']>>>(
-	store: S,
-	path: P
-): Readonly<DefineTypeByPath<ReturnType<S['get']>, P>> {
+export function get_store_value_by_path<
+	S extends AnyStore,
+	T extends ExtractStoreProxyTarget<S>,
+	P extends ResourcePath<T>
+>(store: S, path: P): DefineTypeByPath<T, P> {
 	const arr = path.split('.');
 	let target = store.get();
 
@@ -11,5 +12,5 @@ export function get_store_value_by_path<S extends AnyStore, P extends ResourcePa
 		target = target[arr[i]];
 	}
 
-	return target as Readonly<DefineTypeByPath<ReturnType<S['get']>, P>>;
+	return target as DefineTypeByPath<T, P>;
 }

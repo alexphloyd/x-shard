@@ -1,16 +1,17 @@
-import { type AnyStore } from '~/core/src/core';
+import { ProxyTarget, type AnyStore, ExtractStoreProxyTarget } from '~/core/src/core';
 import { useEffect, useReducer } from 'react';
 import { get_store_value_by_path } from 'utils/get-store-value-by-path';
 
-export function useStore<S extends AnyStore, P extends ResourcePath<ReturnType<S['get']>>>(
+export function useStore<S extends AnyStore, T extends ExtractStoreProxyTarget<S>>(store: S): T;
+export function useStore<S extends AnyStore, T extends ExtractStoreProxyTarget<S>, P extends ResourcePath<T>>(
 	store: S,
 	path: P
-): Readonly<DefineTypeByPath<ReturnType<S['get']>, P & string>>;
-export function useStore<S extends AnyStore>(store: S): ReturnType<S['get']>;
-export function useStore<S extends AnyStore, P extends ResourcePath<ReturnType<S['get']>> | void = void>(
-	store: S,
-	path?: P
-): ReturnType<S['get']> | Readonly<DefineTypeByPath<ReturnType<S['get']>, P & string>> {
+): Readonly<DefineTypeByPath<T, P>>;
+export function useStore<
+	S extends AnyStore,
+	T extends ExtractStoreProxyTarget<S>,
+	P extends ResourcePath<T> | void = void
+>(store: S, path?: P): T | DefineTypeByPath<T, P & string> {
 	const [, force] = useReducer((x) => !x, true);
 
 	useEffect(() => {
@@ -18,7 +19,7 @@ export function useStore<S extends AnyStore, P extends ResourcePath<ReturnType<S
 		return untrack;
 	}, [store]);
 
-	if (typeof path === 'string' && path?.length) {
+	if (typeof path === 'string' && path.length) {
 		return get_store_value_by_path(store, path);
 	} else {
 		return store.get();
