@@ -81,7 +81,7 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 			}
 		},
 		/**
-		 * @description $.subscribe(handler) - runs the handler after
+		 * @description $.track(handler) - runs the handler after
 		 * an entire chain of event handlers is completed and the store has changed.
 		 * */
 		track: (handler: (snapshot: typeof immutable_proxy) => void) => {
