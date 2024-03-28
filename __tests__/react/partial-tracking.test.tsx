@@ -47,7 +47,6 @@ describe('react bind - partial', () => {
 	function App() {
 		const $ = useStore($main, 'side.a');
 		render_times += 1;
-		console.log($);
 		return <p data-testid='content'>{$}</p>;
 	}
 	function get_app_side_value() {
