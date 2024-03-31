@@ -1,5 +1,6 @@
 {
 	"name": "x-shard-dev",
+	"private": true,
 	"author": "arch1i",
 	"description": "Event-driven tool to describe behavior rely on either domain or browser events.",
 	"license": "MIT",
@@ -42,5 +43,10 @@
 		"state-management",
 		"domain",
 		"reactive"
+	],
+	"workspaces": [
+		"utils",
+		"packages/core",
+		"packages/react"
 	]
 }

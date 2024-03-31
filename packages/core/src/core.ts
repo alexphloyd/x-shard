@@ -1,7 +1,7 @@
 import { create_deep_immutable_proxy, create_deep_writable_proxy } from './proxy';
 import { browser_event_target_map, mutated_proxies_map } from './maps';
 import { unsafe_parse_object, is_string, is_synthetic_emitter, parse_browser_emitter } from './guards';
-import { type Brand } from '../../../utils/shared-types';
+import { type Brand } from 'utils/shared-types';
 
 const system = new EventTarget();
 

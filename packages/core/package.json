@@ -1,7 +1,7 @@
 {
 	"name": "x-shard",
 	"author": "arch1i",
-	"version": "0.0.18",
+	"version": "0.0.19",
 	"description": "Event-driven tool to describe behavior rely on either domain or browser events.",
 	"license": "MIT",
 	"main": "./dist/x-shard.cjs",
@@ -14,7 +14,9 @@
 		"./README.md",
 		"./LICENSE"
 	],
-	"dependencies": {},
+	"dependencies": {
+		"utils": "2.0.0"
+	},
 	"keywords": [
 		"state",
 		"store",

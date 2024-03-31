@@ -1,7 +1,7 @@
 import { useEffect, useReducer, useRef } from 'react';
-import { get_store_value_by_path } from '../../../utils/get-store-value-by-path'; // ?
-import { type AnyStore, type ExtractStoreProxyTarget } from '../../core/src/core'; // replace with x-shard import
-import { type DefineTypeByPath, type ResourcePath } from '../../../utils/shared-types';
+import { get_store_value_by_path } from 'utils/get-store-value-by-path';
+import { type DefineTypeByPath, type ResourcePath } from 'utils/shared-types';
+import { type AnyStore, type ExtractStoreProxyTarget } from 'x-shard';
 
 export function useStore<S extends AnyStore, T extends ExtractStoreProxyTarget<S>>(store: S): T;
 export function useStore<S extends AnyStore, T extends ExtractStoreProxyTarget<S>, P extends ResourcePath<T>>(
