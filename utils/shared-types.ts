@@ -20,7 +20,9 @@ export type DefineTypeByPath<T, P extends string, D extends any[] = []> = D['len
 		: Split<P, '.'>['length'] extends D['length']
 		? T
 		: never
-	: T;
+	: Split<P, '.'>['length'] extends D['length']
+	? T
+	: never;
 
 export type Split<S extends string, D extends string> = string extends S
 	? string[]
