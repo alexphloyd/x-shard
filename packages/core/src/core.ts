@@ -102,9 +102,12 @@ export function createStore<S extends ProxyTarget>(initial: S = {} as S) {
 export interface ProxyTarget {
 	[key: string]: any;
 }
-export type AnyStore<T extends ProxyTarget = any> = ReturnType<typeof createStore<T>>;
-export type ExtractStoreProxyTarget<S extends ProxyTarget> = typeof createStore extends (target: S) => any
-	? ReturnType<S['get']>
+export type AnyStore = Brand<Record<keyof ReturnType<typeof createStore>, any>, 'store'>;
+
+export type ExtractStoreProxyTarget<S extends ReturnType<typeof createStore>> = ReturnType<
+	S['get']
+> extends Readonly<infer R>
+	? R
 	: never;
 
 /*
