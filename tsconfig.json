@@ -1,10 +1,10 @@
 {
 	"compilerOptions": {
-		"target": "ES2019",
+		"target": "ESNext",
 		"lib": ["ESNext", "DOM", "DOM.Iterable"],
 
 		"baseUrl": "./",
-		"outDir": "dist",
+		"rootDir": "./",
 
 		"module": "CommonJS",
 		"declaration": false,
@@ -24,6 +24,13 @@
 			"~/*": ["packages/*"]
 		}
 	},
-	"include": ["packages/core/src/*", "packages/react/src", "__tests__/*", "utils/*", "**/*.tsx", "**/*.ts"],
+	"include": [
+		"packages/core/src/*",
+		"packages/react/src",
+		"packages/utils/*",
+		"__tests__/*",
+		"**/*.tsx",
+		"**/*.ts"
+	],
 	"exclude": ["node_modules", "dist"]
 }
