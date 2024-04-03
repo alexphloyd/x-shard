@@ -8,11 +8,10 @@ export function useStore<S extends AnyStore, T extends ExtractStoreProxyTarget<S
 	store: S,
 	path: P
 ): Readonly<DefineTypeByPath<T, P>>;
-export function useStore<
-	S extends AnyStore,
-	T extends ExtractStoreProxyTarget<S>,
-	P extends ResourcePath<T> | void = void
->(store: S, path?: P): T | Readonly<DefineTypeByPath<T, P & string>> {
+export function useStore<S extends AnyStore, T extends ExtractStoreProxyTarget<S>, P extends ResourcePath<T>>(
+	store: S,
+	path?: P
+) {
 	const [, render] = useReducer((x) => !x, true);
 
 	const prev = useRef<any>();

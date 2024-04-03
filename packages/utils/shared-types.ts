@@ -6,13 +6,13 @@ export type ResourcePath<T, D extends any[] = []> = T extends Array<any>
 			[K in Exclude<keyof T, symbol>]: `${K}${_ResourcePath<T[K], D>}`;
 	  }>;
 
-type _ResourcePath<T, D extends any[]> = D['length'] extends 15
+type _ResourcePath<T, D extends any[]> = D['length'] extends 12
 	? ''
 	: T extends object
 	? '' | `.${ResourcePath<T, [...D, 0]>}`
 	: '';
 
-export type DefineTypeByPath<T, P extends string, D extends any[] = []> = D['length'] extends 20
+export type DefineTypeByPath<T, P extends string, D extends any[] = []> = D['length'] extends 15
 	? never
 	: T extends object
 	? Split<P, '.'>[D['length']] extends keyof T
@@ -20,9 +20,7 @@ export type DefineTypeByPath<T, P extends string, D extends any[] = []> = D['len
 		: Split<P, '.'>['length'] extends D['length']
 		? T
 		: never
-	: Split<P, '.'>['length'] extends D['length']
-	? T
-	: never;
+	: T;
 
 export type Split<S extends string, D extends string> = string extends S
 	? string[]

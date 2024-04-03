@@ -1,7 +1,7 @@
 {
 	"name": "x-shard-react",
 	"author": "arch1i",
-	"version": "0.0.7",
+	"version": "0.0.8",
 	"description": "React bindings for x-shard.",
 	"license": "MIT",
 	"main": "./dist/x-shard-react.cjs",
