@@ -36,7 +36,7 @@ yarn add x-shard-react
 ```
 
 ```ts
-const $main = createStore({ counter: 5 });
+const $main = createStore({ counter: 5, init: false });
 const incremented = createEvent();
 
 $main.on(incremented, (store) => {
@@ -44,12 +44,13 @@ $main.on(incremented, (store) => {
 });
 $main.on('document:DOMContentLoaded', (store) => {
     store.counter += 10;
+    store.init = true
 });
 
 function App() {
-    const $ = useStore($main);
+    const $counter = useStore($main, 'counter');
     return (
-        <button onClick={() => incremented()}>count</button>
+        <button onClick={() => incremented()}>{$counter}</button>
     )
 }
 ```
