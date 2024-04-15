@@ -2,7 +2,7 @@
 
 <a href="https://www.npmjs.com/package/x-shard" target="_blank">npm</a>
 
-An event-driven tool that describes behavior relies on either domain or browser events. x-shard is a framework-agnostic tool that operates within the web environment, adhering to its standards. <br />
+An event-driven tool to describe behavior relies on either domain or browser events. x-shard is a framework-agnostic tool that operates within the web environment, adhering to its standards. <br />
 
 ```plaintext
 yarn add x-shard
